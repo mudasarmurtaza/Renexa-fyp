@@ -1,4 +1,7 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Admin = require("../models/Admin");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminRoleMiddleware = require("../middleware/adminRoleMiddleware");
 const Contractor = require("../models/Contractor");
@@ -8,6 +11,26 @@ const Proposal = require("../models/Proposal");
 const router = express.Router();
 
 // All admin routes will use authMiddleware and adminRoleMiddleware
+// Admin login route (no auth required)
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    const token = jwt.sign({ id: admin._id, email: admin.email, role: admin.role }, require("../utils/jwtConfig").JWT_SECRET, { expiresIn: "1h" });
+    res.json({ token });
+  } catch (err) {
+    console.error("Admin login error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.use(authMiddleware, adminRoleMiddleware);
 
 // Admin dashboard stats endpoint
@@ -208,6 +231,61 @@ router.get("/dashboard/recent-data", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching admin dashboard recent data:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get pending contractors
+router.get("/contractors/pending", async (req, res) => {
+  try {
+    const pending = await Contractor.find({
+      $or: [{ status: "pending" }, { isApproved: false }]
+    });
+    res.json({ list: pending });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Approve contractor
+router.put("/contractors/:id/approve", async (req, res) => {
+  try {
+    const contractor = await Contractor.findByIdAndUpdate(
+      req.params.id,
+      { status: "approved", isApproved: true },
+      { new: true }
+    );
+    if (!contractor) return res.status(404).json({ message: "Contractor not found" });
+    res.json({ message: "Contractor approved successfully", contractor });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Reject contractor
+router.put("/contractors/:id/reject", async (req, res) => {
+  try {
+    const contractor = await Contractor.findByIdAndUpdate(
+      req.params.id,
+      { status: "rejected", isApproved: false },
+      { new: true }
+    );
+    if (!contractor) return res.status(404).json({ message: "Contractor not found" });
+    res.json({ message: "Contractor rejected successfully", contractor });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get all running bids
+router.get("/running-bids", async (req, res) => {
+  try {
+    const bids = await Proposal.find()
+      .populate("project", "title location budget")
+      .populate("customer", "name email phone")
+      .populate("contractor", "name email phone");
+    res.json({ list: bids });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });

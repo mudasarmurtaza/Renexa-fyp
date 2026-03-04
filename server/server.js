@@ -13,6 +13,8 @@ const adminRoutes = require("./routes/adminRoutes");
 const proposalRoutes = require("./routes/proposalRoutes");
 const chatRoutes = require("./routes/chatRoutes"); // new chat routes
 const Message = require("./models/Message");
+const Admin = require("./models/Admin");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 
@@ -69,35 +71,35 @@ io.on("connection", (socket) => {
   });
 
   // Listen for chat messages
-socket.on("chatMessage", async ({ roomId, senderId, senderName, message }) => {
-  console.log("📩 New chat message:", { roomId, senderId, senderName, message });
+  socket.on("chatMessage", async ({ roomId, senderId, senderName, message }) => {
+    console.log("📩 New chat message:", { roomId, senderId, senderName, message });
 
-  if (!roomId || roomId === "undefined") {
-    console.error("❌ roomId invalid");
-    return;
-  }
+    if (!roomId || roomId === "undefined") {
+      console.error("❌ roomId invalid");
+      return;
+    }
 
-  if (!senderId || !message) {
-    console.error("❌ senderId or message missing");
-    return;
-  }
+    if (!senderId || !message) {
+      console.error("❌ senderId or message missing");
+      return;
+    }
 
-  try {
-    const newMessage = new Message({
-      chatRoom: roomId,
-      senderId,
-      senderName,
-      message,
-      timestamp: new Date(),
-    });
+    try {
+      const newMessage = new Message({
+        chatRoom: roomId,
+        senderId,
+        senderName,
+        message,
+        timestamp: new Date(),
+      });
 
-    await newMessage.save();
-    io.to(roomId).emit("message", newMessage);
+      await newMessage.save();
+      io.to(roomId).emit("message", newMessage);
 
-  } catch (err) {
-    console.error("❌ Error saving message:", err.message);
-  }
-});
+    } catch (err) {
+      console.error("❌ Error saving message:", err.message);
+    }
+  });
 
 
 
@@ -107,7 +109,24 @@ socket.on("chatMessage", async ({ roomId, senderId, senderName, message }) => {
 });
 
 // Connect to DB and start server
-getConnection().then(() => {
+getConnection().then(async () => {
+  // Ensure default admin exists
+  try {
+    const adminEmail = "mudasir@example.com";
+    const existingAdmin = await Admin.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      await Admin.create({
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+      });
+      console.log("✅ Default admin 'mudasir' created (mudasir@example.com / admin123)");
+    }
+  } catch (error) {
+    console.error("❌ Error creating default admin:", error);
+  }
+
   server.listen(5000, () => {
     console.log("🚀 Server running on http://localhost:5000");
   });
