@@ -13,6 +13,7 @@ if (!fs.existsSync(uploadDir)) {
 // ✅ Configure multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log("Multer Destination called for file:", file.originalname);
     cb(null, uploadDir); // store in profile_images_contractor folder
   },
   filename: (req, file, cb) => {
@@ -21,6 +22,7 @@ const storage = multer.diskStorage({
       "-" +
       Math.round(Math.random() * 1e9) +
       path.extname(file.originalname);
+    console.log("Multer Filename generated:", uniqueName);
     cb(null, uniqueName);
   },
 });

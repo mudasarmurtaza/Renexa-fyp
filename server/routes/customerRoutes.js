@@ -13,9 +13,19 @@ const router = express.Router();
 
 const ProjectRequest = require('../models/ProjectRequest');
 
+// Debug route to check schema
+router.get("/debug-schema", (req, res) => {
+  res.json({
+    schemaPaths: Object.keys(Customer.schema.paths),
+  });
+});
+
 // Customer signup
 router.post("/signup", customerFileUpload, async (req, res) => {
   try {
+    console.log("Signup Request Body:", req.body);
+    console.log("Signup Request File:", req.file);
+
     const customerData = {
       name: req.body.name,
       phone: req.body.phone,
@@ -26,8 +36,11 @@ router.post("/signup", customerFileUpload, async (req, res) => {
       profilePic: req.file ? `/customer_images/${req.file.filename}` : null,
     };
 
+    console.log("Customer data to save:", customerData);
+
     const customer = new Customer(customerData);
     await customer.save();
+    console.log("Customer saved successfully:", customer);
 
     res.status(201).json({ message: "Customer registered successfully", customer });
   } catch (error) {
@@ -40,8 +53,14 @@ router.post("/signup", customerFileUpload, async (req, res) => {
 });
 
 
-router.get("/me", authMiddleware, (req, res) => {
-  res.json({ authenticated: true, user: req.user });
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await Customer.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ authenticated: false, message: "User not found" });
+    res.json({ authenticated: true, user });
+  } catch (error) {
+    res.status(500).json({ authenticated: false, message: "Server error" });
+  }
 });
 
 
@@ -57,7 +76,7 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id, email: user.email, profilePic: user.profilePic }, JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ message: "Login successful", token, user: { id: user._id, name:user.name , phone:user.phone , gender:user.gender,  email: user.email, profilePic: user.profilePic ,address:user.address, role:user.role}});
+    res.json({ message: "Login successful", token, user: { id: user._id, name: user.name, phone: user.phone, gender: user.gender, email: user.email, profilePic: user.profilePic, address: user.address, role: user.role } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -79,6 +98,8 @@ router.put("/update/:id", customerFileUpload, async (req, res) => {
     // If new profile picture uploaded
     if (req.file) {
       updatedData.profilePic = `/customer_images/${req.file.filename}`;
+    } else if (req.body.removeProfile === 'true' || req.body.removeProfile === true) {
+      updatedData.profilePic = null;
     }
 
     const updatedCustomer = await Customer.findByIdAndUpdate(
@@ -179,18 +200,18 @@ router.delete("/projects/:requestId", async (req, res) => {
 
 
 //Show All Customers
-router.get('/list',async (req,res)=>{
-   
+router.get('/list', async (req, res) => {
+
   try {
     const list = await Customer.find();
-    
-     if (!list || list.length === 0) {
+
+    if (!list || list.length === 0) {
       return res.status(404).json({ message: "No customers found", list: [] });
     }
-    res.status(200).json({message:"Success",list})
-    
+    res.status(200).json({ message: "Success", list })
+
   } catch (error) {
-    res.status(200).json({message:""})
+    res.status(200).json({ message: "" })
   }
 })
 

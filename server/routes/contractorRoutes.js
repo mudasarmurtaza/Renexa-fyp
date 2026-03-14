@@ -264,27 +264,30 @@ router.put("/update/:id", fileUpload, async (req, res) => {
 
 
 // Contractor profile (protected)
-router.get("/me", authMiddleware, (req, res) => {
-  res.json({ authenticated: true, user: req.user });
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await Contractor.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ authenticated: false, message: "User not found" });
+    res.json({ authenticated: true, user });
+  } catch (error) {
+    res.status(500).json({ authenticated: false, message: "Server error" });
+  }
 });
 
 
 
-// GET all open projects only from contractor's city
-// GET all open projects only from contractor's city
-// GET all open projects for contractor's city
+// GET all open projects for contractors
 router.get("/projects/:contractorId", async (req, res) => {
   try {
     const { contractorId } = req.params;
 
+    // We still verify contractor exists
     const contractor = await Contractor.findById(contractorId);
     if (!contractor) return res.status(404).json({ error: "Contractor not found" });
 
-    const cityRegex = new RegExp(contractor.city, "i");
-
+    // Remove city filter to show all open projects
     const projects = await ProjectRequest.find({
-      status: "open",
-      location: cityRegex
+      status: "open"
     }).populate("customer", "name email phone profilePic"); // ✅ include profilePic
 
     res.json(projects);
