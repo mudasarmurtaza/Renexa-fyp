@@ -1,0 +1,13 @@
+* {
+  /* color: #0D0C0C; */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.typewriter,
+.typewriter-cursor {
+  color: #ffffff !important;
+}
