@@ -64,7 +64,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 
-// Customer login
+// Customer loginn
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
