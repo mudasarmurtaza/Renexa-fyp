@@ -52,7 +52,7 @@ const AdminRecentTables = ({ recentData }) => {
                 {latestProjectsPosted.map((project) => (
                   <tr key={project._id}>
                     <td>{project.title}</td>
-                    <td>{project.customer.name}</td>
+                    <td>{project.customer?.name || <span className="text-muted">Deleted User</span>}</td>
                     <td>{formatDate(project.createdAt)}</td>
                   </tr>
                 ))}
@@ -79,10 +79,10 @@ const AdminRecentTables = ({ recentData }) => {
               <tbody>
                 {recentAcceptedProposals.map((proposal) => (
                   <tr key={proposal._id}>
-                    <td>{proposal.project.title}</td>
-                    <td>{proposal.contractor.name}</td>
-                    <td>{proposal.customer.name}</td>
-                    <td>${proposal.price.toFixed(2)}</td>
+                    <td>{proposal.project?.title || <span className="text-muted">Deleted Project</span>}</td>
+                    <td>{proposal.contractor?.name || <span className="text-muted">Deleted Contractor</span>}</td>
+                    <td>{proposal.customer?.name || <span className="text-muted">Deleted Customer</span>}</td>
+                    <td>${proposal.price?.toFixed(2)}</td>
                     <td>{formatDate(proposal.createdAt)}</td>
                   </tr>
                 ))}

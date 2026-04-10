@@ -5,6 +5,8 @@ import { HouseDoor, ClipboardCheck, ExclamationCircle } from "react-bootstrap-ic
 import { NavLink, useNavigate } from "react-router-dom";
 import { RxUpdate } from "react-icons/rx";
 import { MdBlock } from "react-icons/md";
+import AdminDashboard from "./AdminDashboard";
+
 
 
 export const Admin = () => {
@@ -237,11 +239,9 @@ export const Admin = () => {
 
           <Nav className="flex-column gap-2 mt-2">
             <NavLink
-              to="#"
-              className="text-white text-opacity-75 text-decoration-none d-flex align-items-center p-3 rounded-3 transition-all"
-              style={{ transition: "all 0.2s" }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)")}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+              onClick={() => setActiveTab("")}
+              className={`text-white text-opacity-75 text-decoration-none d-flex align-items-center p-3 rounded-3 transition-all ${activeTab === "" ? "bg-white bg-opacity-10 text-opacity-100 shadow-sm" : ""}`}
+              style={{ cursor: "pointer" }}
             >
               <HouseDoor className="me-3 fs-5" /> Dashboard
             </NavLink>
@@ -310,6 +310,12 @@ export const Admin = () => {
 
         {/* Content Section */}
         <div className="p-4">
+          
+          {/* Dashboard View */}
+          {activeTab === "" && (
+            <AdminDashboard />
+          )}
+
           {/* Customers Table */}
           {activeTab === "customers" && (
             <>
@@ -705,15 +711,14 @@ export const Admin = () => {
 
                           <td className="text-center">
                             <span
-                              className={`badge rounded-pill px-3 py-2 ${
-                                b.status === "accepted"
-                                  ? "bg-success"
-                                  : b.status === "shortlisted"
+                              className={`badge rounded-pill px-3 py-2 ${b.status === "accepted"
+                                ? "bg-success"
+                                : b.status === "shortlisted"
                                   ? "bg-info text-dark"
                                   : b.status === "rejected"
-                                  ? "bg-danger"
-                                  : "bg-warning text-dark"
-                              }`}
+                                    ? "bg-danger"
+                                    : "bg-warning text-dark"
+                                }`}
                             >
                               {b.status?.toUpperCase() || "PENDING"}
                             </span>
@@ -744,16 +749,16 @@ export const Admin = () => {
         </Modal.Header>
         <Modal.Body className="text-center p-4">
           {modalImageSrc && (
-            <img 
-              src={modalImageSrc} 
-              alt={modalImageTitle} 
-              className="img-fluid rounded shadow-sm" 
-              style={{ maxHeight: '80vh', objectFit: 'contain' }} 
+            <img
+              src={modalImageSrc}
+              alt={modalImageTitle}
+              className="img-fluid rounded shadow-sm"
+              style={{ maxHeight: '80vh', objectFit: 'contain' }}
             />
           )}
         </Modal.Body>
       </Modal>
 
-    </div>
+    </div >
   );
 };

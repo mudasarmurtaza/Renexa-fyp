@@ -17,7 +17,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('adminToken');
         if (!token) {
           navigate('/admin/login'); // Redirect to login if no token
           return;
@@ -30,10 +30,11 @@ const AdminDashboard = () => {
         };
 
         const [statsRes, chartsRes, recentRes] = await Promise.all([
-          axios.get('/admin/dashboard/stats', config),
-          axios.get('/admin/dashboard/charts', config),
-          axios.get('/admin/dashboard/recent-data', config),
+          axios.get('http://localhost:5000/admin/dashboard/stats', config),
+          axios.get('http://localhost:5000/admin/dashboard/charts', config),
+          axios.get('http://localhost:5000/admin/dashboard/recent-data', config),
         ]);
+
 
         setStats(statsRes.data);
         setChartsData(chartsRes.data);
