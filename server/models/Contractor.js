@@ -42,6 +42,16 @@ const ContractorSchema = new mongoose.Schema({
    specialties: [{ type: String }],
    rating: { type: Number, default: 0, min: 0, max: 5 },
    totalProjects: { type: Number, default: 0 },
+
+   // Customer reviews
+   reviews: [{
+     customer:   { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
+     customerName: { type: String },
+     proposal:   { type: mongoose.Schema.Types.ObjectId, ref: "Proposal" },
+     rating:     { type: Number, required: true, min: 1, max: 5 },
+     review:     { type: String, default: "" },
+     createdAt:  { type: Date, default: Date.now }
+   }],
    
    createdAt: { type: Date, default: Date.now }, }); 
    

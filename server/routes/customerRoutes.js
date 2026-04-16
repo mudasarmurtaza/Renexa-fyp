@@ -1,6 +1,7 @@
 // routes/customerRoutes.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const Customer = require("../models/Customer");
 const customerFileUpload = require("../CustomerPic");
 const { JWT_SECRET } = require("../utils/jwtConfig");
@@ -68,16 +69,21 @@ router.get("/me", authMiddleware, async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("🔑 Login attempt for email:", email);
+    
     const user = await Customer.findOne({ email });
 
     if (!user || user.password !== password) {
+      console.log("❌ Invalid credentials for:", email);
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign({ id: user._id, email: user.email, profilePic: user.profilePic }, JWT_SECRET, { expiresIn: "1h" });
 
+    console.log("✅ Login successful for:", email);
     res.json({ message: "Login successful", token, user: { id: user._id, name: user.name, phone: user.phone, gender: user.gender, email: user.email, profilePic: user.profilePic, address: user.address, role: user.role } });
   } catch (err) {
+    console.error("🔥 Login Error:", err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -217,7 +223,10 @@ router.get('/list', async (req, res) => {
 
 
 // Get single customer by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return next();
+  }
   try {
     const customer = await Customer.findById(req.params.id);
     if (!customer) return res.status(404).json({ message: "Customer not found" });

@@ -39,6 +39,8 @@ import { CustomerChatList } from "./Pages/Dashboard/Customer/CustomerChatList";
 import { CustomerViewRequests } from "./Pages/Dashboard/Customer/CustomerViewRequests";
 import { ContractorForgotPassword } from "./Pages/Dashboard/ContractorForgotPassword";
 import { FloorPlanGenerator } from "./Pages/Dashboard/Customer/FloorPlanGenerator";
+import { ContractorDirectory } from "./Pages/Dashboard/Customer/ContractorDirectory";
+import NotFound from "./Pages/NotFound";
 
 
 function App() {
@@ -46,6 +48,7 @@ function App() {
     {
       path: '/',
       element: <Layout />,
+      errorElement: <NotFound />,
       children: [
         { index: true, element: <Home /> },
         { path: 'home', element: <Home /> },
@@ -87,6 +90,7 @@ function App() {
         { path: "/customer/proposals", element: <CustomerProposals /> },
         { path: "/customer/shortlisted-proposals", element: <ShortlistedProposals /> },
         { path: "/customer/accepted-proposals", element: <CustomerAcceptedProposals /> },
+        { path: "/customer/contractors",         element: <ContractorDirectory /> },
 
         { path: "customer-chat-list", element: <CustomerChatList /> },
         { path: "/customer/floor-plan", element: <FloorPlanGenerator /> },

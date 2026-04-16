@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -18,9 +19,16 @@ const bcrypt = require("bcryptjs");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // allow from any device on network
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve frontend dist
+app.use(express.static(path.join(__dirname, "../website/dist")));
 
 // Static file serving
 app.use("/contractor_images", express.static(path.join(__dirname, "profile_images_contractor")));
@@ -41,9 +49,9 @@ app.use("/proposals", proposalRoutes);
 app.use("/chat", chatRoutes); // chat API routes
 app.use("/uploads", express.static("uploads"));
 
-// Home route
-app.get("/", (req, res) => {
-  res.send("Welcome to the API. Use /contractor/signup or /customer/signup.");
+// Catch-all route to serve React App for unknown routes (SPA fallback)
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../website/dist/index.html"));
 });
 
 // Logout route (frontend only)
@@ -127,7 +135,7 @@ getConnection().then(async () => {
     console.error("❌ Error creating default admin:", error);
   }
 
-  server.listen(5000, () => {
-    console.log("🚀 Server running on http://localhost:5000");
+  server.listen(5000, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port 5000 (accessible on local network)`);
   });
 });

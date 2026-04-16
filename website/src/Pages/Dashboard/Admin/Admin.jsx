@@ -43,7 +43,7 @@ export const Admin = () => {
   // Fetch Customers
   const SeeAllCustomers = async () => {
     try {
-      const response = await fetch("http://localhost:5000/customer/list", {
+      const response = await fetch("/customer/list", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -63,7 +63,7 @@ export const Admin = () => {
   // Fetch Contractors
   const SeeAllContractors = async () => {
     try {
-      const response = await fetch("http://localhost:5000/contractor/list", {
+      const response = await fetch("/contractor/list", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
@@ -103,7 +103,7 @@ export const Admin = () => {
   const SeePendingContractors = async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:5000/admin/contractors/pending", {
+      const response = await fetch("/admin/contractors/pending", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export const Admin = () => {
   const approveContractor = async (id) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:5000/admin/contractors/${id}/approve`, {
+      const response = await fetch(`/admin/contractors/${id}/approve`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +149,7 @@ export const Admin = () => {
   const SeeAllRunningBids = async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:5000/admin/running-bids", {
+      const response = await fetch("/admin/running-bids", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -188,7 +188,7 @@ export const Admin = () => {
   const rejectContractor = async (id) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:5000/admin/contractors/${id}/reject`, {
+      const response = await fetch(`/admin/contractors/${id}/reject`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -580,17 +580,17 @@ export const Admin = () => {
                             <div className="small text-info mb-2">Registration Date: {new Date(c.createdAt).toLocaleDateString()}</div>
                             <div className="d-flex flex-wrap gap-2">
                               {c.cnicFront && (
-                                <button type="button" onClick={() => openImageModal(`http://localhost:5000${c.cnicFront}`, `CNIC Front - ${c.name}`)} className="btn btn-outline-primary btn-sm rounded-pill px-3 py-1" style={{ fontSize: "0.75rem", fontWeight: "600" }}>
+                                <button type="button" onClick={() => openImageModal(`${c.cnicFront}`, `CNIC Front - ${c.name}`)} className="btn btn-outline-primary btn-sm rounded-pill px-3 py-1" style={{ fontSize: "0.75rem", fontWeight: "600" }}>
                                   <i className="bi bi-file-earmark-image me-1"></i> CNIC Front
                                 </button>
                               )}
                               {c.cnicBack && (
-                                <button type="button" onClick={() => openImageModal(`http://localhost:5000${c.cnicBack}`, `CNIC Back - ${c.name}`)} className="btn btn-outline-primary btn-sm rounded-pill px-3 py-1" style={{ fontSize: "0.75rem", fontWeight: "600" }}>
+                                <button type="button" onClick={() => openImageModal(`${c.cnicBack}`, `CNIC Back - ${c.name}`)} className="btn btn-outline-primary btn-sm rounded-pill px-3 py-1" style={{ fontSize: "0.75rem", fontWeight: "600" }}>
                                   <i className="bi bi-file-earmark-image me-1"></i> CNIC Back
                                 </button>
                               )}
                               {c.verificationImage && (
-                                <button type="button" onClick={() => openImageModal(`http://localhost:5000${c.verificationImage}`, `Verification Document - ${c.name}`)} className="btn btn-outline-info btn-sm rounded-pill px-3 py-1" style={{ fontSize: "0.75rem", fontWeight: "600" }}>
+                                <button type="button" onClick={() => openImageModal(`${c.verificationImage}`, `Verification Document - ${c.name}`)} className="btn btn-outline-info btn-sm rounded-pill px-3 py-1" style={{ fontSize: "0.75rem", fontWeight: "600" }}>
                                   <i className="bi bi-file-earmark-check me-1"></i> Verification Doc
                                 </button>
                               )}

@@ -14,7 +14,7 @@ export const CustomerChatList = () => {
                 const customerId = customer._id || customer.id; // ✅ handle both cases
 
                 const response = await fetch(
-                    `http://localhost:5000/proposals/customer/${customerId}/accepted`
+                    `/proposals/customer/${customerId}/accepted`
                 );
 
                 const data = await response.json();
@@ -34,7 +34,7 @@ export const CustomerChatList = () => {
     }, []);
 
     const openChat = (proposalId) => {
-        fetch("http://localhost:5000/chat/room", {
+        fetch("/chat/room", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

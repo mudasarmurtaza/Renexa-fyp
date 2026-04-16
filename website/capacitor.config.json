@@ -1,0 +1,10 @@
+{
+  "appId": "com.renexa.app",
+  "appName": "fyp_project",
+  "webDir": "dist",
+  "server": {
+    "url": "http://192.168.100.175:5173",
+    "cleartext": true
+  }
+}
+

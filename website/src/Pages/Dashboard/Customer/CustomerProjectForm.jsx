@@ -47,7 +47,7 @@ export const CustomerProjectForm = () => {
         }
       });
 
-      const res = await fetch("http://localhost:5000/customer/projects", {
+      const res = await fetch("/customer/projects", {
         method: "POST",
         body: submission, // no headers needed, browser sets multipart
       });

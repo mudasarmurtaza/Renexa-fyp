@@ -75,7 +75,7 @@ export const ContractorSignup = () => {
         formDataToSend.append("profilePic", profilePic); // ✅ append profile picture only if provided
       }
 
-      const res = await fetch("http://localhost:5000/contractor/signup", {
+      const res = await fetch("/contractor/signup", {
         method: "POST",
         body: formDataToSend, // ✅ send as multipart/form-data
       });
@@ -89,7 +89,7 @@ export const ContractorSignup = () => {
           verificationFormData.append("contractorId", data.contractor._id);
           verificationFormData.append("verificationImage", verificationImage);
 
-          const verificationRes = await fetch("http://localhost:5000/contractor/signup/verification", {
+          const verificationRes = await fetch("/contractor/signup/verification", {
             method: "POST",
             body: verificationFormData,
           });
@@ -111,7 +111,7 @@ export const ContractorSignup = () => {
             cnicFormData.append("cnicBack", cnicBack);
           }
 
-          const cnicRes = await fetch("http://localhost:5000/contractor/signup/cnic", {
+          const cnicRes = await fetch("/contractor/signup/cnic", {
             method: "POST",
             body: cnicFormData,
           });

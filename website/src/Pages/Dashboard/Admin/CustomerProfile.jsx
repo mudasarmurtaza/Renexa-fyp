@@ -9,7 +9,7 @@ export const CustomerProfile = () => {
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/customer/${id}`);
+        const res = await fetch(`/customer/${id}`);
         const data = await res.json();
         setCustomer(data);
         console.log(data);
@@ -42,7 +42,7 @@ export const CustomerProfile = () => {
             <div className="col-md-4 text-center mb-3">
               {customer.profilePic ? (
                 <img
-                  src={`http://localhost:5000${customer.profilePic}`}
+                  src={`${customer.profilePic}`}
                   alt="Profile"
                   className="rounded-circle border border-3 border-success"
                   style={{ width: "150px", height: "150px", objectFit: "cover" }}

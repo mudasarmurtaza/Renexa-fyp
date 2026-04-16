@@ -14,12 +14,23 @@ export const CustomerLogin = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/customer/login", {
+      const res = await fetch("/customer/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+
+      let data;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.error("Server returned non-JSON response:", text);
+        setError("Server error. Please check if the database is running.");
+        return;
+      }
+
       if (res.ok) {
         localStorage.setItem("customerToken", data.token);
         localStorage.setItem("customer", JSON.stringify(data.user));
@@ -134,7 +145,7 @@ export const CustomerLogin = () => {
             <h6 style={{ color: "#ffffff" }}>Welcome, {customer.name}!</h6>
             {customer.profilePic && (
               <img
-                src={`http://localhost:5000${customer.profilePic}`}
+                src={`${customer.profilePic}`}
                 alt="Profile"
                 className="rounded-circle mt-2"
                 style={{ width: "80px", height: "80px", objectFit: "cover", border: "2px solid #fbbf24" }}

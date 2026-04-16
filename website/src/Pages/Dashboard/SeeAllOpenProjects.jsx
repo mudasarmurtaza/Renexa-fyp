@@ -14,7 +14,7 @@ export const SeeAllOpenProjects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/contractor/projects/${contractorId}`);
+        const res = await fetch(`/contractor/projects/${contractorId}`);
         console.log(contractorId);
         console.log(res);
 
@@ -83,8 +83,8 @@ export const SeeAllOpenProjects = () => {
                         src={
                           project.customer?.profilePic
                             ? (project.customer.profilePic.startsWith("/")
-                              ? `http://localhost:5000${project.customer.profilePic}`
-                              : `http://localhost:5000/${project.customer.profilePic}`)
+                              ? `${project.customer.profilePic}`
+                              : `/${project.customer.profilePic}`)
                             : "https://via.placeholder.com/60"
                         }
                         alt={project.customer?.name || "Customer"}
@@ -145,8 +145,8 @@ export const SeeAllOpenProjects = () => {
                       <div className="d-flex flex-wrap gap-2">
                         {project.attachments.map((file, index) => {
                           const imageUrl = file.startsWith("/")
-                            ? `http://localhost:5000${file}`
-                            : `http://localhost:5000/${file}`;
+                            ? `${file}`
+                            : `/${file}`;
                           return (
                             <a
                               key={index}

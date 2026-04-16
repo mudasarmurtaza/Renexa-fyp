@@ -14,12 +14,18 @@ export const ContractorLogin = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/contractor/login", {
+      const res = await fetch("/contractor/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (err) {
+        throw new Error("Server returned an invalid response");
+      }
 
       if (res.ok) {
         localStorage.setItem("token", data.token);
@@ -155,7 +161,7 @@ export const ContractorLogin = () => {
             <h6 style={{ color: "#ffffff" }}>Welcome, {contractor.name}!</h6>
             {contractor.profilePic && (
               <img
-                src={`http://localhost:5000${contractor.profilePic}`}
+                src={`${contractor.profilePic}`}
                 alt="Profile"
                 className="rounded-circle mt-2"
                 style={{ width: "80px", height: "80px", objectFit: "cover", border: "2px solid #fbbf24" }}

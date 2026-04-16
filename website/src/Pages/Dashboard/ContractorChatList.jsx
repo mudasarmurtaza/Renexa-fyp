@@ -18,7 +18,7 @@ export const ContractorChatList = () => {
         }
 
         const response = await fetch(
-          `http://localhost:5000/contractor/${contractorId}/accepted`
+          `/contractor/${contractorId}/accepted`
         );
         if (!response.ok) throw new Error(`Server returned ${response.status}`);
 
@@ -46,7 +46,7 @@ const openChat = (proposalId) => {
     return;
   }
 
-  fetch("http://localhost:5000/chat/room", {
+  fetch("/chat/room", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

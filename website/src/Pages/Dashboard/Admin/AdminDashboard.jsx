@@ -30,9 +30,9 @@ const AdminDashboard = () => {
         };
 
         const [statsRes, chartsRes, recentRes] = await Promise.all([
-          axios.get('http://localhost:5000/admin/dashboard/stats', config),
-          axios.get('http://localhost:5000/admin/dashboard/charts', config),
-          axios.get('http://localhost:5000/admin/dashboard/recent-data', config),
+          axios.get('/admin/dashboard/stats', config),
+          axios.get('/admin/dashboard/charts', config),
+          axios.get('/admin/dashboard/recent-data', config),
         ]);
 
 

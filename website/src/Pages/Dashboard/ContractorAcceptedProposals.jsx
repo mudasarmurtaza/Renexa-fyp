@@ -17,7 +17,7 @@ export const ContractorAcceptedProposals = () => {
           return;
         }
 
-        const res = await fetch(`http://localhost:5000/contractor/${contractorId}/accepted`);
+        const res = await fetch(`/contractor/${contractorId}/accepted`);
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
         const data = await res.json();
 

@@ -1,6 +1,7 @@
 // routes/contractorRoutes.js
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const Contractor = require("../models/Contractor");
 const fileUpload = require("../ContractorPic");
@@ -315,14 +316,15 @@ router.post("/projects/:id/contact", async (req, res) => {
 
 
 
-// Show All Contractors (exclude pending)
+// Show All Contractors (approved only, with rating info)
 router.get('/list', async (req, res) => {
   try {
-    // fetch contractors whose status is not "pending"
-    const list = await Contractor.find({ status: { $ne: "pending" } });
+    const list = await Contractor.find({ status: "approved" })
+      .select("-password -cnicFront -cnicBack -verificationImage -resetOTP -resetOTPExpires")
+      .lean();
 
     if (!list || list.length === 0) {
-      return res.status(404).json({ message: "No contractors found", list: [] });
+      return res.status(200).json({ message: "No contractors found", list: [] });
     }
 
     res.status(200).json({ message: "Success", list });
@@ -331,6 +333,95 @@ router.get('/list', async (req, res) => {
     res.status(500).json({ message: "Server error", list: [] });
   }
 });
+
+
+// Submit a rating/review for a contractor (customer only)
+// POST /contractors/:id/rate
+// Body: { customerId, customerName, proposalId, rating (1-5), review }
+router.post("/:id/rate", async (req, res) => {
+  try {
+    const { id: contractorId } = req.params;
+    const { customerId, customerName, proposalId, rating, review } = req.body;
+
+    if (!customerId || !rating) {
+      return res.status(400).json({ message: "customerId and rating are required." });
+    }
+
+    const numRating = Number(rating);
+    if (numRating < 1 || numRating > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+    }
+
+    const contractor = await Contractor.findById(contractorId);
+    if (!contractor) {
+      return res.status(404).json({ message: "Contractor not found." });
+    }
+
+    // Prevent duplicate reviews from same customer
+    const alreadyRated = contractor.reviews.some(
+      (r) => r.customer.toString() === customerId
+    );
+    if (alreadyRated) {
+      return res.status(409).json({ message: "You have already rated this contractor." });
+    }
+
+    // Add review
+    contractor.reviews.push({
+      customer: customerId,
+      customerName: customerName || "Anonymous",
+      proposal: proposalId || null,
+      rating: numRating,
+      review: review || "",
+    });
+
+    // Recompute average rating
+    const total = contractor.reviews.reduce((sum, r) => sum + r.rating, 0);
+    contractor.rating = parseFloat((total / contractor.reviews.length).toFixed(1));
+
+    await contractor.save();
+
+    res.status(201).json({
+      message: "Rating submitted successfully!",
+      rating: contractor.rating,
+      totalReviews: contractor.reviews.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
+// GET reviews for a contractor
+// GET /contractors/:id/reviews
+router.get("/:id/reviews", async (req, res) => {
+  try {
+    const contractor = await Contractor.findById(req.params.id)
+      .select("name profilePic rating reviews")
+      .lean();
+
+    if (!contractor) {
+      return res.status(404).json({ message: "Contractor not found." });
+    }
+
+    // Sort newest first
+    const reviews = (contractor.reviews || []).sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
+    res.status(200).json({
+      contractorName: contractor.name,
+      profilePic: contractor.profilePic,
+      averageRating: contractor.rating,
+      totalReviews: reviews.length,
+      reviews,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+
 
 
 // Get all pending contractors
@@ -363,7 +454,10 @@ router.get("/:contractorId/accepted", async (req, res) => {
 
 
 // Get contractor by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return next();
+  }
   try {
     const contractor = await Contractor.findById(req.params.id).select("-password");
 

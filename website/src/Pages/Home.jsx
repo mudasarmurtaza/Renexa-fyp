@@ -91,7 +91,7 @@ export const Home = () => {
                     </h1>
 
                     <p className="fs-4 mb-5 mx-auto" style={{ maxWidth: "800px", color: "rgba(255,255,255,0.9)" }}>
-                        Renexa.ai is your premium platform for intelligent home estimating and seamless contractor connection.
+                        Renexa.ai residency is your premium platform for intelligent home estimating and seamless contractor connection.
                     </p>
 
                     <button

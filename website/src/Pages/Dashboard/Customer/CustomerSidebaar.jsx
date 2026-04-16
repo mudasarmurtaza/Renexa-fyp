@@ -8,6 +8,7 @@ import {
   ChevronRight,
   X,
   Map,
+  Users,
 } from "lucide-react";
 import { FileText } from "react-bootstrap-icons";
 import { NavLink, useNavigate } from "react-router";
@@ -129,6 +130,7 @@ const SidebarContent = ({ handleLogout, collapsed }) => (
       <SidebarItem to="/customer-chat-list" icon={<MessageCircle size={18} />} label="Chat" collapsed={collapsed} />
       <SidebarItem to="/customer/shortlisted-proposals" icon={<FileText size={18} />} label="Shortlisted Proposals" collapsed={collapsed} />
       <SidebarItem to="/customer/accepted-proposals" icon={<FileText size={18} />} label="Accepted Proposals" collapsed={collapsed} />
+      <SidebarItem to="/customer/contractors" icon={<Users size={18} />} label="Browse Contractors" collapsed={collapsed} />
       <SidebarItem to="/customer/projects" icon={<MessageCircle size={18} />} label="Make Request" collapsed={collapsed} />
       <SidebarItem to="/customer/see-request" icon={<MessageCircle size={18} />} label="View Request" collapsed={collapsed} />
       <SidebarItem to="/customer/floor-plan" icon={<Map size={18} />} label="Floor Plan AI" collapsed={collapsed} />

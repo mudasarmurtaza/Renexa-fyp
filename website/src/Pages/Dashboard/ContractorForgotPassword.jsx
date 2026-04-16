@@ -12,7 +12,7 @@ export const ContractorForgotPassword = () => {
   const handleSendOTP = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/contractor/forgot-password", {
+    const res = await fetch("/contractor/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, name })
@@ -28,7 +28,7 @@ export const ContractorForgotPassword = () => {
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/contractor/verify-otp", {
+    const res = await fetch("/contractor/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp })
@@ -44,7 +44,7 @@ export const ContractorForgotPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/contractor/reset-password", {
+    const res = await fetch("/contractor/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, newPassword })

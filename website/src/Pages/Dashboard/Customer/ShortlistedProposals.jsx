@@ -12,7 +12,7 @@ export const ShortlistedProposals = () => {
   const handleAction = async (id, action) => {
     try {
       const token = localStorage.getItem("customerToken");
-      const res = await fetch(`http://localhost:5000/proposals/${id}/${action}`, {
+      const res = await fetch(`/proposals/${id}/${action}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export const ShortlistedProposals = () => {
         }
 
         const res = await fetch(
-          `http://localhost:5000/proposals/customer/${customerId}/shortlisted`,
+          `/proposals/customer/${customerId}/shortlisted`,
           {
             method: "GET",
             headers: {

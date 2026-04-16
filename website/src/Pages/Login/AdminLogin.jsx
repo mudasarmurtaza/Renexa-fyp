@@ -12,7 +12,7 @@ export const AdminLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/admin/login", {
+      const res = await axios.post("/admin/login", {
         email,
         password,
       });
@@ -20,7 +20,10 @@ export const AdminLogin = () => {
       setMessage("Login successful!");
       navigate("/admin");
     } catch (err) {
-      setMessage(err.response?.data?.message || "Login failed");
+      console.error("Login error:", err);
+      // Axios stores the response data in err.response
+      const errorMsg = err.response?.data?.message || "Login failed. Please check if the database is running.";
+      setMessage(errorMsg);
     }
   };
 

@@ -30,7 +30,7 @@ export const ContractorProfile = () => {
     if (!contractorId) return;
     const fetchFreshData = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/contractor/${contractorId}`);
+        const res = await fetch(`/contractor/${contractorId}`);
         const data = await res.json();
         localStorage.setItem("contractor", JSON.stringify(data));
         setContractor(data);
@@ -139,7 +139,7 @@ export const ContractorProfile = () => {
       if (removeProfile) body.append("removeProfile", true);
 
       const res = await fetch(
-        `http://localhost:5000/contractor/update/${contractorId}`,
+        `/contractor/update/${contractorId}`,
         { method: "PUT", body }
       );
 
@@ -202,7 +202,7 @@ export const ContractorProfile = () => {
                       preview
                         ? preview
                         : contractor.profilePic
-                          ? `http://localhost:5000${contractor.profilePic}`
+                          ? `${contractor.profilePic}`
                           : "/default-avatar.png"
                     }
                     alt="Contractor"
@@ -366,7 +366,7 @@ export const ContractorProfile = () => {
                   <div className="col-md-6 col-lg-4 text-center">
                     <p className="fw-bold text-muted">CNIC Front</p>
                     <img
-                      src={`http://localhost:5000${contractor.cnicFront}`}
+                      src={`${contractor.cnicFront}`}
                       alt="CNIC Front"
                       className="img-fluid border rounded shadow-sm hover-grow"
                       style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -377,7 +377,7 @@ export const ContractorProfile = () => {
                   <div className="col-md-6 col-lg-4 text-center">
                     <p className="fw-bold text-muted">CNIC Back</p>
                     <img
-                      src={`http://localhost:5000${contractor.cnicBack}`}
+                      src={`${contractor.cnicBack}`}
                       alt="CNIC Back"
                       className="img-fluid border rounded shadow-sm hover-grow"
                       style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -388,7 +388,7 @@ export const ContractorProfile = () => {
                   <div className="col-md-6 col-lg-4 text-center">
                     <p className="fw-bold text-muted">Verification Photo</p>
                     <img
-                      src={`http://localhost:5000${contractor.verificationImage}`}
+                      src={`${contractor.verificationImage}`}
                       alt="Verification"
                       className="img-fluid border rounded shadow-sm hover-grow"
                       style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -403,7 +403,7 @@ export const ContractorProfile = () => {
                         {contractor.certifications.map((cert, index) => (
                           <img
                             key={index}
-                            src={`http://localhost:5000${cert}`}
+                            src={`${cert}`}
                             alt={`Certificate-${index}`}
                             className="border rounded shadow-sm hover-grow"
                             width={150}

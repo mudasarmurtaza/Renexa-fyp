@@ -1,0 +1,44 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Database
+mongodb_data/
+*.lock
+
+# Environment / Secrets
+.env
+.env.local
+.env.*.local
+server/.env
+website/.env
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS Files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Build & Scripts
+dist/
+build/
+*.txt
+*.ps1
+!package.json
+!README.md
+
+# Application Uploads
+server/House_Images/*
+server/contractor_cnic_images/*
+server/contractor_verification_images/*
+server/profile_images_contractor/*
+server/profile_images_customer/*
+server/uploads/*

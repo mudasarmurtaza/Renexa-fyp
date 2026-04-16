@@ -1,0 +1,29 @@
+{
+  "name": "renexa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix website",
+    "ai": "\"C:\\Users\\MCP\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m pip install -r server_ai/requirements.txt -q && \"C:\\Users\\MCP\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" server_ai/app.py",
+    "db": "powershell -Command \"& 'C:\\Program Files\\MongoDB\\Server\\8.2\\bin\\mongod.exe' --dbpath d:\\renexa\\mongodb_data\"",
+    "dev": "concurrently \"npm run db\" \"npm run server\" \"npm run client\" \"npm run ai\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mudasarmurtaza/Renexa-fyp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mudasarmurtaza/Renexa-fyp/issues"
+  },
+  "homepage": "https://github.com/mudasarmurtaza/Renexa-fyp#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

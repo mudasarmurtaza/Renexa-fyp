@@ -18,7 +18,7 @@ export const CustomerViewRequests = () => {
         return;
       }
 
-      const res = await fetch(`http://localhost:5000/customer/projects/${customerId}`);
+      const res = await fetch(`/customer/projects/${customerId}`);
       const data = await res.json();
 
       if (res.ok) {
@@ -51,7 +51,7 @@ export const CustomerViewRequests = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`http://localhost:5000/customer/projects/${requestId}`, {
+          const res = await fetch(`/customer/projects/${requestId}`, {
             method: "DELETE",
           });
 
@@ -151,7 +151,7 @@ export const CustomerViewRequests = () => {
                         {req.attachments.map((img, i) => (
                           <img
                             key={i}
-                            src={`http://localhost:5000${img}`}
+                            src={`${img}`}
                             alt="attachment"
                             className="img-thumbnail rounded shadow-sm"
                             style={{ width: "100px", height: "100px", objectFit: "cover" }}

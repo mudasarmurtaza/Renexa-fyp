@@ -10,7 +10,7 @@ export const ContractorProfile = () => {
   useEffect(() => {
     const fetchContractor = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/contractor/${id}`);
+        const res = await fetch(`/contractor/${id}`);
         const data = await res.json();
         setContractor(data);
       } catch (err) {
@@ -25,7 +25,7 @@ export const ContractorProfile = () => {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `http://localhost:5000/admin/contractors/${id}/approve`,
+        `/admin/contractors/${id}/approve`,
         {
           method: "PUT",
           headers: {
@@ -52,7 +52,7 @@ export const ContractorProfile = () => {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `http://localhost:5000/admin/contractors/${id}/reject`,
+        `/admin/contractors/${id}/reject`,
         {
           method: "PUT",
           headers: {
@@ -100,7 +100,7 @@ export const ContractorProfile = () => {
             <div className="col-md-4 text-center mb-3">
               {contractor.profilePic ? (
                 <img
-                  src={`http://localhost:5000${contractor.profilePic}`}
+                  src={`${contractor.profilePic}`}
                   alt="Profile"
                   className="rounded-circle border border-3 border-primary"
                   style={{
@@ -199,7 +199,7 @@ export const ContractorProfile = () => {
                 <div className="col-md-4 text-center">
                   <h6>CNIC Front</h6>
                   <img
-                    src={`http://localhost:5000${contractor.cnicFront}`}
+                    src={`${contractor.cnicFront}`}
                     alt="CNIC Front"
                     className="img-fluid border rounded"
                     style={{ maxHeight: "200px", objectFit: "contain" }}
@@ -211,7 +211,7 @@ export const ContractorProfile = () => {
                 <div className="col-md-4 text-center">
                   <h6>CNIC Back</h6>
                   <img
-                    src={`http://localhost:5000${contractor.cnicBack}`}
+                    src={`${contractor.cnicBack}`}
                     alt="CNIC Back"
                     className="img-fluid border rounded"
                     style={{ maxHeight: "200px", objectFit: "contain" }}
@@ -223,7 +223,7 @@ export const ContractorProfile = () => {
                 <div className="col-md-4 text-center">
                   <h6>Verification Document</h6>
                   <img
-                    src={`http://localhost:5000${contractor.verificationImage}`}
+                    src={`${contractor.verificationImage}`}
                     alt="Verification"
                     className="img-fluid border rounded"
                     style={{ maxHeight: "200px", objectFit: "contain" }}

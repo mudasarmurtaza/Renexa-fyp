@@ -22,8 +22,8 @@ export const Navbar = () => {
 
             // Decide endpoint based on which token exists
             const endpoint = contractorToken
-                ? "http://localhost:5000/contractor/me"
-                : "http://localhost:5000/customer/me";
+                ? "/contractor/me"
+                : "/customer/me";
 
             try {
                 const res = await fetch(endpoint, {
@@ -180,7 +180,7 @@ export const Navbar = () => {
                                     style={{ width: "40px", height: "40px", borderRadius: "50%", overflow: "hidden", border: "2px solid #fbbf24" }}
                                 >
                                     {user?.profilePic ? (
-                                        <img src={`http://localhost:5000${user.profilePic}`} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                        <img src={`${user.profilePic}`} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                     ) : (
                                         <User size={22} className="text-white" />
                                     )}

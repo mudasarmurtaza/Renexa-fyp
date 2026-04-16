@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CustomerHeader } from "./CustomerHeader";
-import { CustomerSidebar } from "./CustomerSidebaar"; // make sure the file is correctly named
+import { CustomerSidebar } from "./CustomerSidebaar"; 
+import AIChatBot from "../../../components/AIChatBot/AIChatBot";
 
 export const CustomerLayout = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -79,6 +80,7 @@ export const CustomerLayout = () => {
         >
           <Outlet />
         </main>
+        <AIChatBot />
       </div>
     </div>
   );

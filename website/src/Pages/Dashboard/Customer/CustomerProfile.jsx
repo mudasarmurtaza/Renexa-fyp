@@ -119,7 +119,7 @@ export const CustomerProfile = () => {
       if (removeProfile) body.append("removeProfile", true);
 
       const res = await fetch(
-        `http://localhost:5000/customer/update/${customerId}`,
+        `/customer/update/${customerId}`,
         { method: "PUT", body }
       );
 
@@ -184,7 +184,7 @@ export const CustomerProfile = () => {
                       preview
                         ? preview
                         : customer.profilePic
-                          ? `http://localhost:5000${customer.profilePic}`
+                          ? `${customer.profilePic}`
                           : "/default-avatar.png"
                     }
                     alt="Customer"

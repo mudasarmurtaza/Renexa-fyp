@@ -49,7 +49,7 @@ export const CustomerSignup = () => {
         console.log("No profile Pic selected to attach.");
       }
 
-      const res = await fetch("http://localhost:5000/customer/signup", { // ✅ fixed absolute API
+      const res = await fetch("/customer/signup", { // ✅ fixed absolute API
         method: "POST",
         body: formDataToSend,
       });

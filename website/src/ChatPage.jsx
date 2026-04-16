@@ -42,7 +42,7 @@ export const ChatPage = () => {
   useEffect(() => {
     if (!roomId) return;
 
-    fetch(`http://localhost:5000/chat/messages/${roomId}`, {
+    fetch(`/chat/messages/${roomId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -53,7 +53,7 @@ export const ChatPage = () => {
   useEffect(() => {
     if (!roomId || !senderId) return;
 
-    fetch(`http://localhost:5000/chat/room/${roomId}`, {
+    fetch(`/chat/room/${roomId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -106,7 +106,7 @@ export const ChatPage = () => {
     formData.append("senderId", senderId);
     formData.append("senderName", user.name);
 
-    const res = await fetch("http://localhost:5000/chat/upload", {
+    const res = await fetch("/chat/upload", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
@@ -211,7 +211,7 @@ export const ChatPage = () => {
                 )}
                 {m.image && (
                   <img
-                    src={`http://localhost:5000${m.image}`}
+                    src={`${m.image}`}
                     alt="sent"
                     style={{
                       maxWidth: "200px",
@@ -220,7 +220,7 @@ export const ChatPage = () => {
                       display: "block",
                       cursor: "pointer",
                     }}
-                    onClick={() => setPreviewImage(`http://localhost:5000${m.image}`)}
+                    onClick={() => setPreviewImage(`${m.image}`)}
                   />
                 )}
                 {m.message && <div>{m.message}</div>}
