@@ -1,4 +1,5 @@
 import React from "react";
+import { DashboardProvider } from "./context/DashboardContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
@@ -35,6 +36,7 @@ import { ContractorChatList } from "./Pages/Dashboard/ContractorChatList";
 import { ShortlistedProposals } from "./Pages/Dashboard/Customer/ShortlistedProposals";
 import { CustomerAcceptedProposals } from "./Pages/Dashboard/Customer/CustomerAcceptedProposals";
 import { ContractorAcceptedProposals } from "./Pages/Dashboard/ContractorAcceptedProposals";
+import { ContractorMyBids } from "./Pages/Dashboard/ContractorMyBids";
 import { CustomerChatList } from "./Pages/Dashboard/Customer/CustomerChatList";
 import { CustomerViewRequests } from "./Pages/Dashboard/Customer/CustomerViewRequests";
 import { ContractorForgotPassword } from "./Pages/Dashboard/ContractorForgotPassword";
@@ -73,7 +75,7 @@ function App() {
         { path: 'All-pending-projects-list', element: <SeeAllOpenProjects /> },
         { path: "/contractor/projects/:projectId/proposal", element: <ContractorSendProposal /> },
         { path: "/contractor/accepted-proposals", element: <ContractorAcceptedProposals /> },
-
+        { path: "/contractor/my-bids", element: <ContractorMyBids /> },
         { path: "/contractor-chat-list", element: <ContractorChatList /> }
 
       ],
@@ -119,7 +121,11 @@ function App() {
     }
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <DashboardProvider>
+      <RouterProvider router={router} />
+    </DashboardProvider>
+  );
 }
 
 

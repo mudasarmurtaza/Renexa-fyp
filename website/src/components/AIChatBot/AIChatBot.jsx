@@ -29,9 +29,7 @@ const AIChatBot = () => {
         setIsLoading(true);
 
         try {
-            const aiPort = 5001;
-            const aiUrl = `${window.location.protocol}//${window.location.hostname}:${aiPort}/chat`;
-            const response = await fetch(aiUrl, {
+            const response = await fetch('/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: userMsg })

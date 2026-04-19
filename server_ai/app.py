@@ -1,7 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import logic
+from dotenv import load_dotenv
+import os
 
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
+import logic
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend integration
 
@@ -33,5 +37,5 @@ def estimate():
     return jsonify(result)
 
 if __name__ == '__main__':
-    print("🤖 Renexa AI Assistant Service starting on http://localhost:5001")
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    print("Renexa AI Assistant Service starting on http://localhost:5001")
+    app.run(host='0.0.0.0', port=5001, debug=False)

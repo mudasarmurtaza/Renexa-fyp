@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt, FaRulerCombined, FaMoneyBillWave, FaCalendarAlt, FaExclamationCircle } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 
-export const SeeAllOpenProjects = () => {
+export const SeeAllOpenProjects = ({ isModal = false }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const contractor = JSON.parse(localStorage.getItem("contractor"));
@@ -45,8 +45,10 @@ export const SeeAllOpenProjects = () => {
   }
 
   return (
-    <div className="container py-5">
-      <h2 className="text-center mb-5 fw-bold text-primary">Available Projects</h2>
+    <div className={isModal ? "" : "container py-5"}>
+      {!isModal && (
+        <h2 className="text-center mb-5 fw-bold text-primary">Available Projects</h2>
+      )}
       {projects.length === 0 ? (
         <div className="alert alert-info text-center" role="alert">
           <h4 className="alert-heading">No Open Projects!</h4>

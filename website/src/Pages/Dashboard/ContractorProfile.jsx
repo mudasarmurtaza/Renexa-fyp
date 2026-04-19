@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useDashboard } from "../../context/DashboardContext";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -13,6 +14,19 @@ export const ContractorProfile = () => {
   const [removeProfile, setRemoveProfile] = useState(false);
   // ✅ Store only the ID separately so the fetch doesn't re-run on every input change
   const [contractorId, setContractorId] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewLoading, setReviewLoading] = useState(true);
+  const { searchTerm } = useDashboard();
+  const documentsRef = useRef(null);
+
+  useEffect(() => {
+    if (searchTerm.toLowerCase().includes("document")) {
+      documentsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Add a brief highlight effect
+      documentsRef.current?.classList.add("section-highlight");
+      setTimeout(() => documentsRef.current?.classList.remove("section-highlight"), 2000);
+    }
+  }, [searchTerm]);
 
   // ✅ Load contractor from localStorage and get the ID
   useEffect(() => {
@@ -40,7 +54,20 @@ export const ContractorProfile = () => {
       }
     };
     fetchFreshData();
-  }, [contractorId]); // ✅ Only depends on ID — won't re-run when form fields change
+    fetchReviews();
+  }, [contractorId]);
+
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch(`/contractor/${contractorId}/reviews`);
+      const data = await res.json();
+      setReviews(data.reviews || []);
+    } catch (err) {
+      console.error("Failed to fetch reviews:", err);
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
 
   if (!contractor) {
@@ -356,7 +383,7 @@ export const ContractorProfile = () => {
           </div>
 
           {/* Contractor Documents Section */}
-          <div className="card shadow-sm mt-5">
+          <div className="card shadow-sm mt-5" ref={documentsRef}>
             <div className="card-header bg-info text-white py-3">
               <h5 className="mb-0 fw-bold">Documents</h5>
             </div>
@@ -427,51 +454,45 @@ export const ContractorProfile = () => {
         {/* Reviews and Comments Section */}
         <div className="col-lg-4">
           <div className="card shadow-sm mb-4">
-            <div className="card-header bg-success text-white text-center py-3">
+            <div className="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
               <h5 className="mb-0 fw-bold">Reviews & Comments</h5>
+              <div className="d-flex align-items-center gap-2">
+                <span className="badge bg-white text-success rounded-pill px-3">
+                  ★ {contractor.rating || 0}
+                </span>
+                <small className="opacity-75" style={{ fontSize: "0.8rem" }}>
+                  ({reviews.length} reviews)
+                </small>
+              </div>
             </div>
             <div className="card-body">
-              {/* Placeholder for reviews */}
-              {[
-                {
-                  id: 1,
-                  author: "Client A",
-                  rating: 5,
-                  comment: "Excellent work, very professional and efficient!",
-                },
-                {
-                  id: 2,
-                  author: "Client B",
-                  rating: 4,
-                  comment: "Good communication and quality service.",
-                },
-                {
-                  id: 3,
-                  author: "Client C",
-                  rating: 5,
-                  comment: "Highly recommended! Will definitely hire again.",
-                },
-              ].map((review) => (
-                <div key={review.id} className="card mb-3 shadow-sm">
-                  <div className="card-body">
-                    <h6 className="card-title mb-1">{review.author}</h6>
-                    <div className="text-warning mb-2">
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
-                    </div>
-                    <p className="card-text text-muted">{review.comment}</p>
-                  </div>
+              {reviewLoading ? (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-success spinner-border-sm" role="status"></div>
                 </div>
-              ))}
-              {/* Add a form for new comments later */}
-              <div className="mt-4">
-                <textarea
-                  className="form-control mb-2"
-                  rows="3"
-                  placeholder="Leave a comment..."
-                ></textarea>
-                <button className="btn btn-success w-100">Submit Comment</button>
-              </div>
+              ) : reviews.length === 0 ? (
+                <div className="text-center py-4 text-muted">
+                  <p className="mb-0">No reviews yet.</p>
+                </div>
+              ) : (
+                reviews.map((review) => (
+                  <div key={review._id} className="card mb-3 shadow-sm border-0 bg-light">
+                    <div className="card-body">
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <h6 className="card-title mb-0 fw-bold">{review.customerName || "Anonymous"}</h6>
+                        <small className="text-muted" style={{ fontSize: "0.7rem" }}>
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </small>
+                      </div>
+                      <div className="text-warning mb-2" style={{ fontSize: "0.8rem" }}>
+                        {"★".repeat(review.rating)}
+                        {"☆".repeat(5 - review.rating)}
+                      </div>
+                      <p className="card-text text-dark" style={{ fontSize: "0.9rem" }}>{review.review}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

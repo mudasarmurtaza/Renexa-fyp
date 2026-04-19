@@ -11,3 +11,35 @@ body {
 .typewriter-cursor {
   color: #ffffff !important;
 }
+
+/* Dashboard Enhancements */
+.section-highlight {
+  animation: highlight-pulse 2s ease-out;
+  border: 2px solid #fbbf24 !important;
+}
+
+@keyframes highlight-pulse {
+  0% { background-color: rgba(251, 191, 36, 0.2); }
+  100% { background-color: transparent; }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-bg-light:hover {
+  background-color: #f8f9fa;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+}

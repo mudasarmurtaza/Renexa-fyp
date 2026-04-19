@@ -13,7 +13,7 @@ const cnicUpload = require("../middleware/ContractorCNIC");
 const authMiddleware = require("../middleware/authMiddleware");
 const { JWT_SECRET } = require("../utils/jwtConfig");
 const ProjectRequest = require("../models/ProjectRequest");
-const Proposal = require("../models/Proposal")
+const Proposal = require("../models/Proposal");
 
 
 
@@ -286,10 +286,15 @@ router.get("/projects/:contractorId", async (req, res) => {
     const contractor = await Contractor.findById(contractorId);
     if (!contractor) return res.status(404).json({ error: "Contractor not found" });
 
-    // Remove city filter to show all open projects
+    // 1. Get IDs of projects where this contractor has already sent a proposal
+    const existingProposals = await Proposal.find({ contractor: contractorId }).select("project").lean();
+    const appliedProjectIds = existingProposals.map(p => p.project.toString());
+    
+    // 2. Fetch projects that are 'open' and where the contractor hasn't applied
     const projects = await ProjectRequest.find({
-      status: "open"
-    }).populate("customer", "name email phone profilePic"); // ✅ include profilePic
+      status: "open",
+      _id: { $nin: appliedProjectIds }
+    }).populate("customer", "name email phone profilePic"); 
 
     res.json(projects);
   } catch (error) {

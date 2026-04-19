@@ -41,7 +41,7 @@ export const Footer = () => {
                         </ul>
 
                         <div className="mt-4">
-                            <button 
+                            <button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     window.open(`${API_BASE_URL}/uploads/app-debug.apk`, "_blank");
@@ -50,8 +50,8 @@ export const Footer = () => {
                                 style={{ borderRadius: '8px', backgroundColor: '#fbbf24', border: 'none', cursor: 'pointer' }}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-android2 me-2 mb-1" viewBox="0 0 16 16">
-                                  <path d="m10.213 1.471.691-1.26c.046-.083.03-.147-.048-.192-.085-.038-.15-.019-.195.058l-.7 1.27A4.8 4.8 0 0 0 8.005.941c-.68 0-1.34.135-1.956.404l-.7-1.27C5.304 0 5.239-.019 5.154.019c-.078.045-.094.109-.048.192l.691 1.26a5.1 5.1 0 0 0-2.328 2.522h9.108a5.1 5.1 0 0 0-2.364-2.522zM8 2.541a.524.524 0 1 1 0 1.048.524.524 0 0 1 0-1.048M4.92 5.06H3.344v6.852h1.576z"/>
-                                  <path d="M5.424 5.06h5.152v6.852c0 .445-.357.81-.796.81H6.22c-.44 0-.796-.365-.796-.81zM12.656 5.06h-1.576v6.852h1.576zM7.228 13.912h1.544V16H7.228z"/>
+                                    <path d="m10.213 1.471.691-1.26c.046-.083.03-.147-.048-.192-.085-.038-.15-.019-.195.058l-.7 1.27A4.8 4.8 0 0 0 8.005.941c-.68 0-1.34.135-1.956.404l-.7-1.27C5.304 0 5.239-.019 5.154.019c-.078.045-.094.109-.048.192l.691 1.26a5.1 5.1 0 0 0-2.328 2.522h9.108a5.1 5.1 0 0 0-2.364-2.522zM8 2.541a.524.524 0 1 1 0 1.048.524.524 0 0 1 0-1.048M4.92 5.06H3.344v6.852h1.576z" />
+                                    <path d="M5.424 5.06h5.152v6.852c0 .445-.357.81-.796.81H6.22c-.44 0-.796-.365-.796-.81zM12.656 5.06h-1.576v6.852h1.576zM7.228 13.912h1.544V16H7.228z" />
                                 </svg>
                                 Download Mobile App
                             </button>
@@ -63,7 +63,7 @@ export const Footer = () => {
                         <h5 className="fw-bold mb-4 text-white">Our Features</h5>
                         <ul className="list-unstyled d-flex flex-column gap-3">
                             <li className="text-secondary">AI Estimations</li>
-                            <li className="text-secondary">2D Map Predictions</li>
+                            {/* <li className="text-secondary">2D Map Predictions</li> */}
                             <li className="text-secondary">Secure Client Chats</li>
                             <li className="text-secondary">Real-Time Tracking</li>
                         </ul>

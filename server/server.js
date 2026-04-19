@@ -13,11 +13,13 @@ const customerRoutes = require("./routes/customerRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const proposalRoutes = require("./routes/proposalRoutes");
 const chatRoutes = require("./routes/chatRoutes"); // new chat routes
+const notificationRoutes = require("./routes/notificationRoutes");
 const Message = require("./models/Message");
 const Admin = require("./models/Admin");
 const bcrypt = require("bcryptjs");
 
 const app = express();
+
 
 app.use(cors({
   origin: "*", // allow from any device on network
@@ -47,7 +49,25 @@ app.use("/customer", customerRoutes);
 app.use("/admin", adminRoutes);
 app.use("/proposals", proposalRoutes);
 app.use("/chat", chatRoutes); // chat API routes
+app.use("/notifications", notificationRoutes);
 app.use("/uploads", express.static("uploads"));
+
+// AI Proxy Route
+app.post("/ai/chat", async (req, res) => {
+  try {
+    const aiUrl = "http://localhost:5001/chat";
+    const response = await fetch(aiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body)
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error("AI Proxy Error:", error.message);
+    res.status(502).json({ reply: "I'm currently having trouble connecting to my brain. Please ensure the AI service is running." });
+  }
+});
 
 // Catch-all route to serve React App for unknown routes (SPA fallback)
 app.use((req, res) => {
@@ -66,6 +86,12 @@ const io = new Server(server, {
     origin: "*", // adjust for your frontend origin
     methods: ["GET", "POST"],
   },
+});
+
+// Attach io to req for use in routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
 });
 
 
@@ -98,6 +124,7 @@ io.on("connection", (socket) => {
         senderId,
         senderName,
         message,
+        isRead: false,
         timestamp: new Date(),
       });
 

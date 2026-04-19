@@ -110,9 +110,15 @@ router.post(
         senderId,
         senderName,
         image: `/uploads/${req.file.filename}`,
+        isRead: false,
       });
 
       await message.save();
+
+      // Emit the message to the chat room via socket.io
+      if (req.io) {
+        req.io.to(roomId).emit("message", message);
+      }
 
       res.json(message);
     } catch (error) {
@@ -121,6 +127,103 @@ router.post(
   }
 );
 
+
+
+// Get all chat rooms for a customer
+router.get("/customer/:customerId/rooms", authMiddleware, async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const rooms = await ChatRoom.find({ customer: customerId })
+      .populate("contractor", "name profilePic");
+      
+    const chatRoomsData = [];
+    
+    for (const room of rooms) {
+      const lastMessage = await Message.findOne({ chatRoom: room._id }).sort({ timestamp: -1 });
+      const unreadCount = await Message.countDocuments({
+        chatRoom: room._id,
+        senderId: { $ne: customerId },
+        isRead: { $ne: true }
+      });
+      
+      chatRoomsData.push({
+        _id: room._id,
+        contractor: room.contractor,
+        lastMessage: lastMessage?.message || (lastMessage?.image ? "Image" : "No messages yet"),
+        timestamp: lastMessage?.timestamp,
+        unreadCount
+      });
+    }
+
+    // Sort by timestamp descending
+    chatRoomsData.sort((a, b) => {
+      const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    res.json(chatRoomsData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all chat rooms for a contractor
+router.get("/contractor/:contractorId/rooms", authMiddleware, async (req, res) => {
+  try {
+    const { contractorId } = req.params;
+    const rooms = await ChatRoom.find({ contractor: contractorId })
+      .populate("customer", "name profilePic");
+      
+    const chatRoomsData = [];
+    
+    for (const room of rooms) {
+      const lastMessage = await Message.findOne({ chatRoom: room._id }).sort({ timestamp: -1 });
+      const unreadCount = await Message.countDocuments({
+        chatRoom: room._id,
+        senderId: { $ne: contractorId },
+        isRead: { $ne: true }
+      });
+      
+      chatRoomsData.push({
+        _id: room._id,
+        customer: room.customer,
+        lastMessage: lastMessage?.message || (lastMessage?.image ? "Image" : "No messages yet"),
+        timestamp: lastMessage?.timestamp,
+        unreadCount
+      });
+    }
+
+    // Sort by timestamp descending
+    chatRoomsData.sort((a, b) => {
+      const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    res.json(chatRoomsData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Mark messages as read
+router.put("/read/:roomId", authMiddleware, async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const { userId } = req.body;
+    
+    // Mark as read all messages in this room NOT sent by the current user
+    await Message.updateMany(
+      { chatRoom: roomId, senderId: { $ne: userId }, isRead: false },
+      { $set: { isRead: true } }
+    );
+    
+    res.json({ message: "Messages marked as read" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 module.exports = router;

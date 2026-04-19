@@ -2,79 +2,99 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const CustomerChatList = () => {
-    const [acceptedProposals, setAcceptedProposals] = useState([]);
+    const [chatRooms, setChatRooms] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAcceptedProposals = async () => {
+        const fetchChatRooms = async () => {
             try {
                 const customer = JSON.parse(localStorage.getItem("customer"));
                 if (!customer) return;
 
                 const customerId = customer._id || customer.id; // ✅ handle both cases
 
+                const token = localStorage.getItem("customerToken");
+
                 const response = await fetch(
-                    `/proposals/customer/${customerId}/accepted`
+                    `/chat/customer/${customerId}/rooms`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
                 );
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    setAcceptedProposals(data);
+                    setChatRooms(data);
                 } else {
-                    console.error(data.message || "Failed to fetch proposals");
+                    console.error(data.message || "Failed to fetch chat rooms");
                 }
             } catch (error) {
-                console.error("Error fetching accepted proposals:", error);
+                console.error("Error fetching chat rooms:", error);
             }
         };
 
 
-        fetchAcceptedProposals();
+        fetchChatRooms();
     }, []);
 
-    const openChat = (proposalId) => {
-        fetch("/chat/room", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("customerToken")}`,
-            },
-            body: JSON.stringify({ proposalId }),
-        })
-            .then((res) => res.json())
-            .then((chatRoom) => {
-                navigate(`/chat/${chatRoom._id}`);
-            })
-            .catch(console.error);
+    const openChat = (roomId) => {
+        navigate(`/chat/${roomId}`);
     };
 
     return (
         <div className="container mt-4">
             <h2>Chats with Contractors</h2>
-            {acceptedProposals.length === 0 && <p>No accepted proposals yet.</p>}
+            {chatRooms.length === 0 && <p className="text-muted">No chats found.</p>}
             <ul className="list-group">
-                {acceptedProposals.map((proposal) => (
+                {chatRooms.map((chat) => (
                     <li
-                        key={proposal._id}
-                        className="list-group-item d-flex justify-content-between align-items-center"
+                        key={chat._id}
+                        className="list-group-item d-flex justify-content-between align-items-center cursor-pointer hover-bg-light"
+                        onClick={() => openChat(chat._id)}
+                        style={{ cursor: "pointer" }}
                     >
-                        <div>
-                            <img
-                                src={proposal.contractor.profilePic}
-                                alt={proposal.contractor.name}
-                                width={40}
-                                height={40}
-                                style={{ borderRadius: "50%", marginRight: "10px" }}
-                            />
-                            <strong>{proposal.contractor.name}</strong>
+                        <div className="d-flex align-items-center">
+                            <div className="position-relative">
+                                <img
+                                    src={chat.contractor?.profilePic || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                                    alt={chat.contractor?.name}
+                                    width={45}
+                                    height={45}
+                                    style={{ borderRadius: "50%", marginRight: "15px", objectFit: "cover" }}
+                                />
+                                {chat.unreadCount > 0 && (
+                                    <span 
+                                        className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary border border-white"
+                                        style={{ fontSize: "0.6rem" }}
+                                    >
+                                        {chat.unreadCount}
+                                    </span>
+                                )}
+                            </div>
+                            <div>
+                                <strong className="d-block">{chat.contractor?.name}</strong>
+                                <small className="text-muted text-truncate" style={{ maxWidth: "200px" }}>
+                                    {chat.lastMessage}
+                                </small>
+                            </div>
                         </div>
-                        <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => openChat(proposal._id)}
-                        >
-                            Open Chat
-                        </button>
+                        <div className="d-flex flex-column align-items-end">
+                            <small className="text-muted mb-1">
+                                {chat.timestamp ? new Date(chat.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                            </small>
+                            <button
+                                className="btn btn-outline-primary btn-sm rounded-pill px-3"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    openChat(chat._id);
+                                }}
+                            >
+                                Chat
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>

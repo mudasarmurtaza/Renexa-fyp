@@ -66,6 +66,15 @@ export const Navbar = () => {
         setUser(null);
         window.dispatchEvent(new Event("authChange"));
         navigate("/home");
+        closeNavbar();
+    };
+
+    const closeNavbar = () => {
+        const navbar = document.getElementById("navbarNav");
+        if (navbar && navbar.classList.contains("show")) {
+            const toggler = document.querySelector(".navbar-toggler");
+            if (toggler) toggler.click();
+        }
     };
 
     return (
@@ -91,13 +100,13 @@ export const Navbar = () => {
                 <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul className="navbar-nav align-items-center w-100 justify-content-end gap-2">
                         <li className="nav-item">
-                            <NavLink to="/home" className="nav-link custom-link">Home</NavLink>
+                            <NavLink to="/home" className="nav-link custom-link" onClick={closeNavbar}>Home</NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/about-us" className="nav-link custom-link">About Us</NavLink>
+                            <NavLink to="/about-us" className="nav-link custom-link" onClick={closeNavbar}>About Us</NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/services" className="nav-link custom-link">Services</NavLink>
+                            <NavLink to="/services" className="nav-link custom-link" onClick={closeNavbar}>Services</NavLink>
                         </li>
 
                         {authenticated ? (
@@ -124,12 +133,12 @@ export const Navbar = () => {
                                         aria-labelledby="registerDropdown"
                                     >
                                         <li>
-                                            <NavLink to="/customer-signup" className="dropdown-item custom-dropdown-item">
+                                            <NavLink to="/customer-signup" className="dropdown-item custom-dropdown-item" onClick={closeNavbar}>
                                                 As Customer
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/contractor-signup" className="dropdown-item custom-dropdown-item">
+                                            <NavLink to="/contractor-signup" className="dropdown-item custom-dropdown-item" onClick={closeNavbar}>
                                                 As Contractor
                                             </NavLink>
                                         </li>
@@ -152,12 +161,12 @@ export const Navbar = () => {
                                         aria-labelledby="loginDropdown"
                                     >
                                         <li>
-                                            <NavLink to="/customer-login" className="dropdown-item custom-dropdown-item">
+                                            <NavLink to="/customer-login" className="dropdown-item custom-dropdown-item" onClick={closeNavbar}>
                                                 As  Customer
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/contractor-login" className="dropdown-item custom-dropdown-item">
+                                            <NavLink to="/contractor-login" className="dropdown-item custom-dropdown-item" onClick={closeNavbar}>
                                                 As Contractor
                                             </NavLink>
                                         </li>
@@ -176,6 +185,7 @@ export const Navbar = () => {
                             <li className="nav-item ms-lg-2 mt-3 mt-lg-0 list-unstyled">
                                 <NavLink
                                     to={localStorage.getItem("token") ? "/contractor-profile" : "/customer-profile"}
+                                    onClick={closeNavbar}
                                     className="profile-btn text-decoration-none d-flex align-items-center justify-content-center p-0"
                                     style={{ width: "40px", height: "40px", borderRadius: "50%", overflow: "hidden", border: "2px solid #fbbf24" }}
                                 >

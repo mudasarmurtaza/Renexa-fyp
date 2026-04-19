@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import socket from "../../../socket";
+import { useDashboard } from "../../../context/DashboardContext";
 
 export const ChatPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const { refreshNotifications } = useDashboard();
 
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
@@ -33,10 +35,22 @@ export const ChatPage = () => {
 
     socket.on("message", (msg) => {
       setMessages((prev) => [...prev, msg]);
+      
+      // If we receive a message while we are successfully in the chat room, mark it as read immediately 
+      if (msg.senderId !== senderId) {
+        fetch(`/chat/read/${roomId}`, {
+          method: "PUT",
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}` 
+          },
+          body: JSON.stringify({ userId: senderId })
+        }).then(() => refreshNotifications());
+      }
     });
 
     return () => socket.off("message");
-  }, [roomId]);
+  }, [roomId, senderId, token]); // Removed refreshNotifications from deps
 
   /* 🔥 LOAD OLD MESSAGES */
   useEffect(() => {
@@ -48,6 +62,27 @@ export const ChatPage = () => {
       .then((res) => res.json())
       .then((data) => setMessages(data.messages || []));
   }, [roomId]);
+
+  /* ✅ MARK MESSAGES AS READ */
+  useEffect(() => {
+    if (!roomId || !senderId || !token) return;
+
+    fetch(`/chat/read/${roomId}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify({ userId: senderId })
+    })
+      .then((res) => {
+        if (res.ok) {
+           refreshNotifications();
+        }
+        return res.json();
+      })
+      .catch((err) => console.error("Error marking messages as read:", err));
+  }, [roomId, senderId, token]); // Removed refreshNotifications from deps
 
   /* 👤 LOAD CHAT HEADER USER */
   useEffect(() => {

@@ -125,6 +125,9 @@ router.put("/:id/accept", authMiddleware, async (req, res) => {
 
     } else if (proposal.status === "shortlisted") {
       proposal.status = "accepted";
+      
+      // Mark project as in-progress when a proposal is accepted
+      await ProjectRequest.findByIdAndUpdate(proposal.project, { status: "in-progress" });
     }
 
     await proposal.save();
@@ -171,6 +174,38 @@ router.get("/customer/:customerId/accepted", async (req, res) => {
       .populate("project", "title budget location");
 
     res.json(proposals);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get all proposals for a specific contractor
+router.get("/contractor/:contractorId", async (req, res) => {
+  try {
+    const proposals = await Proposal.find({ contractor: req.params.contractorId })
+      .populate("project", "title budget location")
+      .populate("customer", "name email");
+    res.json(proposals);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Contractor deletes (cancels) their own proposal
+ */
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const proposal = await Proposal.findById(req.params.id);
+    if (!proposal) return res.status(404).json({ error: "Proposal not found" });
+
+    // Ensure it's the contractor's own proposal
+    if (proposal.contractor.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    await Proposal.findByIdAndDelete(req.params.id);
+    res.json({ message: "Proposal deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

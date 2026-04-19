@@ -4,6 +4,7 @@ import {
   Map,
   Upload,
   ClipboardCheck,
+  ClipboardList,
   MessageCircle,
   LogOut,
   ChevronLeft,
@@ -44,7 +45,7 @@ export const ContractorSidebar = ({ showSidebar, setShowSidebar, collapsed, setC
         }}
       >
         <ToggleButton collapsed={collapsed} setCollapsed={setCollapsed} />
-        <SidebarContent handleLogout={handleLogout} collapsed={collapsed} />
+        <SidebarContent handleLogout={handleLogout} collapsed={collapsed} setShowSidebar={setShowSidebar} />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -84,7 +85,7 @@ export const ContractorSidebar = ({ showSidebar, setShowSidebar, collapsed, setC
           >
             <X size={16} color="#ffffff" />
           </div>
-          <SidebarContent handleLogout={handleLogout} collapsed={false} />
+          <SidebarContent handleLogout={handleLogout} collapsed={false} setShowSidebar={setShowSidebar} />
         </aside>
       )}
     </>
@@ -117,7 +118,7 @@ const ToggleButton = ({ collapsed, setCollapsed }) => (
 );
 
 /* Sidebar Content */
-const SidebarContent = ({ handleLogout, collapsed }) => (
+const SidebarContent = ({ handleLogout, collapsed, setShowSidebar }) => (
   <>
     <div className="mb-5">
       {!collapsed && (
@@ -131,14 +132,15 @@ const SidebarContent = ({ handleLogout, collapsed }) => (
     </div>
 
     <ul className="nav flex-column gap-2 flex-grow-1">
-      <SidebarItem to="/home" icon={<House size={18} />} label="Home" collapsed={collapsed} />
-      <SidebarItem to="contractor-profile" icon={<User size={18} />} label="Profile" collapsed={collapsed} />
-      <SidebarItem to="/contractor/accepted-proposals" icon={<ClipboardCheck size={18} />} label="Accepted Proposals" collapsed={collapsed} />
-      <SidebarItem to="#" icon={<Map size={18} />} label="2D Map Predict" collapsed={collapsed} />
-      {/* <SidebarItem to="#" icon={<Upload size={18} />} label="Upload Images" collapsed={collapsed} /> */}
-      <SidebarItem to="/contractor-project-track" icon={<ClipboardCheck size={18} />} label="Project Tracking" collapsed={collapsed} />
-      <SidebarItem to="/contractor-chat-list" icon={<MessageCircle size={18} />} label="Chat" collapsed={collapsed} />
-      <SidebarItem to="/All-pending-projects-list" icon={<MessageCircle size={18} />} label="See Available Projects" collapsed={collapsed} />
+      <SidebarItem to="/home" icon={<House size={18} />} label="Home" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="contractor-profile" icon={<User size={18} />} label="Profile" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/contractor/accepted-proposals" icon={<ClipboardCheck size={18} />} label="Accepted Proposals" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/contractor/my-bids" icon={<ClipboardList size={18} />} label="My Bids" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      {/* <SidebarItem to="#" icon={<Map size={18} />} label="2D Map Predict" collapsed={collapsed} setShowSidebar={setShowSidebar} /> */}
+      {/* <SidebarItem to="#" icon={<Upload size={18} />} label="Upload Images" collapsed={collapsed} setShowSidebar={setShowSidebar} /> */}
+      <SidebarItem to="/contractor-project-track" icon={<ClipboardCheck size={18} />} label="Project Tracking" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/contractor-chat-list" icon={<MessageCircle size={18} />} label="Chat" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/All-pending-projects-list" icon={<MessageCircle size={18} />} label="See Available Projects" collapsed={collapsed} setShowSidebar={setShowSidebar} />
     </ul>
 
     <div className="mt-auto pt-4">
@@ -161,10 +163,11 @@ const SidebarContent = ({ handleLogout, collapsed }) => (
 );
 
 /* Sidebar Item */
-const SidebarItem = ({ to, icon, label, collapsed }) => (
+const SidebarItem = ({ to, icon, label, collapsed, setShowSidebar }) => (
   <li className="nav-item">
     <NavLink
       to={to}
+      onClick={() => setShowSidebar && setShowSidebar(false)}
       className={({ isActive }) =>
         `nav-link d-flex align-items-center ${collapsed ? "justify-content-center" : "gap-3"} px-3 py-2 rounded-3 ${isActive ? "active-link" : ""}`
       }

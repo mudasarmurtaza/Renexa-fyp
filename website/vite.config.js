@@ -46,7 +46,29 @@ export default defineConfig(({ mode }) => {
           bypass: (req) => {
             if (req.headers.accept?.includes("text/html")) return "/index.html";
           }
-        }
+        },
+        "/notifications": {
+          target,
+          changeOrigin: true,
+          bypass: (req) => {
+            if (req.headers.accept?.includes("text/html")) return "/index.html";
+          }
+        },
+        "/ai": {
+          target,
+          changeOrigin: true,
+          bypass: (req) => {
+            if (req.headers.accept?.includes("text/html")) return "/index.html";
+          }
+        },
+        "/uploads": { target, changeOrigin: true },
+        "/contractor_images": { target, changeOrigin: true },
+        "/customer_images": { target, changeOrigin: true },
+        "/house_images": { target, changeOrigin: true },
+        "/contractor_verification_images": { target, changeOrigin: true },
+        "/contractor_cnic_images": { target, changeOrigin: true },
+        "/contractor_verification": { target, changeOrigin: true },
+        "/contractor_certifications": { target, changeOrigin: true }
       }
     }
   };

@@ -1,7 +1,6 @@
 import {
   House,
   User,
-  ClipboardCheck,
   MessageCircle,
   LogOut,
   ChevronLeft,
@@ -12,12 +11,18 @@ import {
 } from "lucide-react";
 import { FileText } from "react-bootstrap-icons";
 import { NavLink, useNavigate } from "react-router";
+import React from "react";
 
-export const CustomerSidebar = ({ showSidebar, collapsed, setCollapsed, setShowSidebar }) => {
+/* Sidebar Component */
+export const CustomerSidebar = ({ showSidebar, setShowSidebar, collapsed, setCollapsed }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("customerToken");
+    localStorage.removeItem("contractor");
+    localStorage.removeItem("customer");
+    localStorage.removeItem("user");
     window.dispatchEvent(new Event("authChange"));
     navigate("/home");
   };
@@ -28,31 +33,38 @@ export const CustomerSidebar = ({ showSidebar, collapsed, setCollapsed, setShowS
       <aside
         className="d-none d-lg-flex flex-column text-white p-4"
         style={{
-          width: "100%",
+          width: collapsed ? "70px" : "240px",
           backgroundColor: "#253863",
           borderRight: "1px solid rgba(255,255,255,0.05)",
           height: "100%",
           overflowY: "auto",
           overflowX: "hidden",
+          position: "relative",
+          transition: "width 0.3s ease",
         }}
       >
         <ToggleButton collapsed={collapsed} setCollapsed={setCollapsed} />
-        <SidebarContent handleLogout={handleLogout} collapsed={collapsed} />
+        <SidebarContent handleLogout={handleLogout} collapsed={collapsed} setShowSidebar={setShowSidebar} />
       </aside>
 
       {/* Mobile Sidebar */}
-      <aside
-        className="d-lg-none d-flex flex-column text-white p-4"
-        style={{
-          width: "100%",
-          backgroundColor: "#253863",
-          height: "100%",
-          overflowY: "auto",
-          overflowX: "hidden",
-          position: "relative",
-        }}
-      >
-        {setShowSidebar && (
+      {showSidebar && (
+        <aside
+          className="d-lg-none d-flex flex-column text-white p-4"
+          style={{
+            width: 240,
+            backgroundColor: "#253863",
+            height: "100%",
+            overflowY: "auto",
+            overflowX: "hidden",
+            position: "fixed",
+            top: 0,
+            left: 0,
+            zIndex: 1100,
+            transition: "all 0.3s ease",
+            boxShadow: "10px 0 30px rgba(0,0,0,0.5)",
+          }}
+        >
           <div
             onClick={() => setShowSidebar(false)}
             style={{
@@ -73,9 +85,9 @@ export const CustomerSidebar = ({ showSidebar, collapsed, setCollapsed, setShowS
           >
             <X size={16} color="#ffffff" />
           </div>
-        )}
-        <SidebarContent handleLogout={handleLogout} collapsed={false} />
-      </aside>
+          <SidebarContent handleLogout={handleLogout} collapsed={false} setShowSidebar={setShowSidebar} />
+        </aside>
+      )}
     </>
   );
 };
@@ -97,43 +109,39 @@ const ToggleButton = ({ collapsed, setCollapsed }) => (
       justifyContent: "center",
       cursor: "pointer",
       boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+      transition: "all 0.3s ease",
+      zIndex: 20,
     }}
   >
-    {collapsed ? (
-      <ChevronRight size={16} color="#253863" />
-    ) : (
-      <ChevronLeft size={16} color="#253863" />
-    )}
+    {collapsed ? <ChevronRight size={16} color="#253863" /> : <ChevronLeft size={16} color="#253863" />}
   </div>
 );
 
 /* Sidebar Content */
-const SidebarContent = ({ handleLogout, collapsed }) => (
+const SidebarContent = ({ handleLogout, collapsed, setShowSidebar }) => (
   <>
-    <div className="mb-4">
+    <div className="mb-5">
       {!collapsed && (
         <>
           <h5 className="fw-bold mb-0 text-white">
-            Renexa<span style={{ color: "#fbbf24" }}>.ai</span>
+            Renexa<span style={{ color: "#fbbf24" }}>.AI</span>
           </h5>
-          <small style={{ color: "rgba(255,255,255,0.6)" }}>
-            Smart Construction
-          </small>
+          <small style={{ color: "rgba(255,255,255,0.6)" }}>Smart Construction</small>
         </>
       )}
     </div>
 
     <ul className="nav flex-column gap-2 flex-grow-1">
-      <SidebarItem to="/home" icon={<House size={18} />} label="Home" collapsed={collapsed} />
-      <SidebarItem to="customer-profile" icon={<User size={18} />} label="Profile" collapsed={collapsed} />
-      <SidebarItem to="/customer/proposals" icon={<FileText size={18} />} label="Project Proposals" collapsed={collapsed} />
-      <SidebarItem to="/customer-chat-list" icon={<MessageCircle size={18} />} label="Chat" collapsed={collapsed} />
-      <SidebarItem to="/customer/shortlisted-proposals" icon={<FileText size={18} />} label="Shortlisted Proposals" collapsed={collapsed} />
-      <SidebarItem to="/customer/accepted-proposals" icon={<FileText size={18} />} label="Accepted Proposals" collapsed={collapsed} />
-      <SidebarItem to="/customer/contractors" icon={<Users size={18} />} label="Browse Contractors" collapsed={collapsed} />
-      <SidebarItem to="/customer/projects" icon={<MessageCircle size={18} />} label="Make Request" collapsed={collapsed} />
-      <SidebarItem to="/customer/see-request" icon={<MessageCircle size={18} />} label="View Request" collapsed={collapsed} />
-      <SidebarItem to="/customer/floor-plan" icon={<Map size={18} />} label="Floor Plan AI" collapsed={collapsed} />
+      <SidebarItem to="/home" icon={<House size={18} />} label="Home" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="customer-profile" icon={<User size={18} />} label="Profile" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer/proposals" icon={<FileText size={18} />} label="Project Proposals" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer-chat-list" icon={<MessageCircle size={18} />} label="Chat" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer/shortlisted-proposals" icon={<FileText size={18} />} label="Shortlisted Proposals" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer/accepted-proposals" icon={<FileText size={18} />} label="Accepted Proposals" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer/contractors" icon={<Users size={18} />} label="Browse Contractors" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer/projects" icon={<MessageCircle size={18} />} label="Make Request" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      <SidebarItem to="/customer/see-request" icon={<MessageCircle size={18} />} label="View Request" collapsed={collapsed} setShowSidebar={setShowSidebar} />
+      {/* <SidebarItem to="/customer/floor-plan" icon={<Map size={18} />} label="Floor Plan AI" collapsed={collapsed} setShowSidebar={setShowSidebar} /> */}
     </ul>
 
     <div className="mt-auto pt-4">
@@ -156,10 +164,11 @@ const SidebarContent = ({ handleLogout, collapsed }) => (
 );
 
 /* Sidebar Item */
-const SidebarItem = ({ to, icon, label, collapsed }) => (
+const SidebarItem = ({ to, icon, label, collapsed, setShowSidebar }) => (
   <li className="nav-item">
     <NavLink
       to={to}
+      onClick={() => setShowSidebar && setShowSidebar(false)}
       className={({ isActive }) =>
         `nav-link d-flex align-items-center ${collapsed ? "justify-content-center" : "gap-3"} px-3 py-2 rounded-3 ${isActive ? "active-link" : ""}`
       }

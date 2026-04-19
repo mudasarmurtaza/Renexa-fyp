@@ -91,7 +91,7 @@ export const Home = () => {
                     </h1>
 
                     <p className="fs-4 mb-5 mx-auto" style={{ maxWidth: "800px", color: "rgba(255,255,255,0.9)" }}>
-                        Renexa.ai residency is your premium platform for intelligent home estimating and seamless contractor connection.
+                        Renexa is your premium platform for intelligent home estimating and seamless contractor connection.
                     </p>
 
                     <button
@@ -195,9 +195,11 @@ export const Home = () => {
 
                 <div className="row text-center g-4 justify-content-center px-2 px-md-0">
                     {[
-                        { title: "AI Estimations", desc: "Get highly accurate project costs and breakdowns using our advanced machine learning models designed for the construction industry.", img: AIestimation },
-                        { title: "2D Map Prediction", desc: "Generate intelligent 2D floor plans directly from your project requirements and spatial specifications.", img: D_Map },
+                        { title: "Accurate Bidding", desc: "Accurate bidding system that enables transparent communication between clients and contractors with real-time negotiation and proposal tracking", img: SecureChat },
+
                         { title: "Secure Chats", desc: "Communicate safely with contractors through our fully encrypted, built-in, real-time messaging platform.", img: SecureChat },
+                        { title: "AI Estimations", desc: "Get highly accurate project costs and breakdowns using our advanced machine learning models designed for the construction industry.", img: AIestimation },
+                        // { title: "2D Map Prediction", desc: "Generate intelligent 2D floor plans directly from your project requirements and spatial specifications.", img: D_Map },
                         { title: "Contractor Rating", desc: "Make informed decisions based on verified peer reviews, project outcomes, and comprehensive performance history.", img: ContactRating },
                         { title: "Real-Time Tracking", desc: "Monitor your project milestones, financial payments, and overall construction progress in real-time.", img: RealTime },
                         { title: "Media Uploads", desc: "Seamlessly share CAD blueprints, site photos, and necessary legal documents securely in one central hub.", img: "https://img.icons8.com/color/96/upload--v1.png" },

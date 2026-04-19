@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import { useDashboard } from "../../../context/DashboardContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import Swal from "sweetalert2";
@@ -12,6 +13,20 @@ export const CustomerProfile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [removeProfile, setRemoveProfile] = useState(false);
+
+  const { searchTerm } = useDashboard();
+  const profileCardRef = useRef(null);
+
+  // ✅ Search focus logic
+  useEffect(() => {
+    if (searchTerm.toLowerCase().includes("profile") && profileCardRef.current) {
+        profileCardRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        profileCardRef.current.classList.add("section-highlight");
+        setTimeout(() => {
+          profileCardRef.current.classList.remove("section-highlight");
+        }, 2000);
+    }
+  }, [searchTerm]);
 
   // ✅ Load customer data from localStorage
   useEffect(() => {
@@ -164,9 +179,9 @@ export const CustomerProfile = () => {
 
   return (
     <div className="d-flex vh-100">
-      <div className="flex-grow-1 d-flex flex-column">
-        <main className="flex-grow-1 p-4 bg-light ms-lg-5 ms-0">
-          <div className="card shadow-sm">
+      <div className="flex-grow-1 d-flex flex-column h-100">
+        <main className="flex-grow-1 p-0 p-lg-4 bg-light overflow-auto">
+          <div className="card shadow-sm mx-auto" style={{ maxWidth: "800px" }} ref={profileCardRef}>
             <div className="card-header bg-primary text-white text-center">
               <h6 className="mb-0 fw-semibold">Customer Profile</h6>
             </div>

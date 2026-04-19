@@ -221,7 +221,7 @@ export const Services = () => {
           {[
             { title: "Cost Estimation", desc: "Get accurate cost estimates instantly by entering basic project details. Our AI system calculates total budget with precision.", icon: Calculator },
             { title: "Material Planning", desc: "Receive a detailed breakdown of materials based on your specifications, helping you avoid wastage and ensure optimal allocation.", icon: Package },
-            { title: "Floor Plan Design", desc: "Visualize your dream home with our easy-to-use floor plan designer. Create custom layouts and adjust room sizes effortlessly.", icon: Map },
+            // { title: "Floor Plan Design", desc: "Visualize your dream home with our easy-to-use floor plan designer. Create custom layouts and adjust room sizes effortlessly.", icon: Map },
             { title: "Builder Matching", desc: "Connect with verified contractors in your area. Browse reviews and past projects to select the right professional.", icon: Users },
             { title: "Secure Collaboration", desc: "Communicate directly with contractors through our built-in secure messaging. Share drawings and track updates.", icon: MessageSquare },
             { title: "Budget Tracking", desc: "Track expenses in real-time and compare against your planned budget. Avoid unexpected overruns with smart alerts.", icon: LineChart },
