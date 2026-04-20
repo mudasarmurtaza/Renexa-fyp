@@ -37,22 +37,42 @@ const RatingModal = ({ proposal, customer, onClose, onSuccess }) => {
     if (rating === 0) { setError("Please select a star rating."); return; }
     setSubmitting(true);
     setError("");
+
+    const custId = customer?._id || customer?.id;
+    const custName = customer?.name || "Customer";
+
+    console.log("Submitting rating:", {
+      contractorId,
+      customerId: custId,
+      rating,
+      proposalId: proposal._id
+    });
+
     try {
       const res = await fetch(`/contractor/${contractorId}/rate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customerId:   customer?._id || customer?.id,
-          customerName: customer?.name || "Customer",
+          customerId:   custId,
+          customerName: custName,
           proposalId:   proposal._id,
           rating,
           review,
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.message || "Failed to submit rating."); }
-      else         { setDone(true); if (onSuccess) onSuccess(proposal._id, rating); }
-    } catch { setError("Network error. Please try again."); }
+      if (!res.ok) { 
+        console.error("Rating submission failed:", data);
+        setError(data.message || "Failed to submit rating."); 
+      }
+      else { 
+        setDone(true); 
+        if (onSuccess) onSuccess(proposal._id, rating); 
+      }
+    } catch (err) { 
+      console.error("Network error during rating:", err);
+      setError("Network error. Please try again."); 
+    }
     finally  { setSubmitting(false); }
   };
 

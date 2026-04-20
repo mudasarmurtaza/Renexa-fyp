@@ -282,10 +282,6 @@ router.get("/projects/:contractorId", async (req, res) => {
   try {
     const { contractorId } = req.params;
 
-    // We still verify contractor exists
-    const contractor = await Contractor.findById(contractorId);
-    if (!contractor) return res.status(404).json({ error: "Contractor not found" });
-
     // 1. Get IDs of projects where this contractor has already sent a proposal
     const existingProposals = await Proposal.find({ contractor: contractorId }).select("project").lean();
     const appliedProjectIds = existingProposals.map(p => p.project.toString());
@@ -341,20 +337,26 @@ router.get('/list', async (req, res) => {
 
 
 // Submit a rating/review for a contractor (customer only)
-// POST /contractors/:id/rate
+// POST /contractor/:id/rate
 // Body: { customerId, customerName, proposalId, rating (1-5), review }
 router.post("/:id/rate", async (req, res) => {
   try {
     const { id: contractorId } = req.params;
     const { customerId, customerName, proposalId, rating, review } = req.body;
 
-    if (!customerId || !rating) {
+    console.log(`Rating request received for contractor ${contractorId} from customer ${customerId}`);
+
+    if (!customerId || rating === undefined) {
       return res.status(400).json({ message: "customerId and rating are required." });
     }
 
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ message: "Invalid customerId format." });
+    }
+
     const numRating = Number(rating);
-    if (numRating < 1 || numRating > 5) {
-      return res.status(400).json({ message: "Rating must be between 1 and 5." });
+    if (isNaN(numRating) || numRating < 1 || numRating > 5) {
+      return res.status(400).json({ message: "Rating must be a number between 1 and 5." });
     }
 
     const contractor = await Contractor.findById(contractorId);
@@ -362,12 +364,20 @@ router.post("/:id/rate", async (req, res) => {
       return res.status(404).json({ message: "Contractor not found." });
     }
 
-    // Prevent duplicate reviews from same customer
-    const alreadyRated = contractor.reviews.some(
-      (r) => r.customer.toString() === customerId
-    );
+    // Ensure reviews array exists (for legacy records)
+    if (!contractor.reviews) {
+      contractor.reviews = [];
+    }
+
+    // Prevent duplicate reviews from same customer for the same proposal if provided
+    const alreadyRated = contractor.reviews.some((r) => {
+      const sameCustomer = r.customer && r.customer.toString() === customerId.toString();
+      const sameProposal = proposalId ? (r.proposal && r.proposal.toString() === proposalId.toString()) : false;
+      return proposalId ? (sameCustomer && sameProposal) : sameCustomer;
+    });
+
     if (alreadyRated) {
-      return res.status(409).json({ message: "You have already rated this contractor." });
+      return res.status(409).json({ message: "You have already rated this contractor for this proposal." });
     }
 
     // Add review
@@ -377,6 +387,7 @@ router.post("/:id/rate", async (req, res) => {
       proposal: proposalId || null,
       rating: numRating,
       review: review || "",
+      createdAt: new Date()
     });
 
     // Recompute average rating
@@ -391,7 +402,10 @@ router.post("/:id/rate", async (req, res) => {
       totalReviews: contractor.reviews.length,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error submitting rating:", error);
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: "Validation error", details: error.errors });
+    }
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });

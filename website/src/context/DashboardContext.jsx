@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext } from "react";
 
 const DashboardContext = createContext();
@@ -24,12 +25,12 @@ export const DashboardProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token") || localStorage.getItem("customerToken");
       const res = await fetch(`/notifications/${roleToUse}/${idToUse}`, {
-          headers: { "Authorization": `Bearer ${token}` }
+        headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
-      
+
       const resChats = await fetch(`/notifications/${roleToUse}/${idToUse}/chats`, {
-          headers: { "Authorization": `Bearer ${token}` }
+        headers: { "Authorization": `Bearer ${token}` }
       });
       const chatData = await resChats.json();
 
@@ -48,7 +49,7 @@ export const DashboardProvider = ({ children }) => {
     const updateAuth = () => {
       const contractor = JSON.parse(localStorage.getItem("contractor"));
       const customer = JSON.parse(localStorage.getItem("customer"));
-      
+
       let uid = null;
       let userRole = null;
 
@@ -68,18 +69,25 @@ export const DashboardProvider = ({ children }) => {
     updateAuth();
     window.addEventListener("authChange", updateAuth);
     window.addEventListener("storage", updateAuth);
-    
+
     const interval = setInterval(() => {
-        // We use state values here, so we don't pass arguments
-        fetchNotificationCounts();
-    }, 10000); 
-    
+        // Fetch using existing identity
+        const contractor = JSON.parse(localStorage.getItem("contractor"));
+        const customer = JSON.parse(localStorage.getItem("customer"));
+        let uid = null;
+        let userRole = null;
+        if (contractor) { uid = contractor._id || contractor.id; userRole = 'contractor'; }
+        else if (customer) { uid = customer._id || customer.id; userRole = 'customer'; }
+        
+        if (uid && userRole) fetchNotificationCounts(uid, userRole);
+    }, 30000); // 30 seconds interval is sufficient
+
     return () => {
       window.removeEventListener("authChange", updateAuth);
       window.removeEventListener("storage", updateAuth);
       clearInterval(interval);
     };
-  }, [userId, role]);
+  }, []); // Remove userId/role from dependencies to avoid infinite loops if fetch updates state
 
   return (
     <DashboardContext.Provider value={{
@@ -88,7 +96,9 @@ export const DashboardProvider = ({ children }) => {
       notifications,
       refreshNotifications: fetchNotificationCounts,
       isProjectModalOpen,
-      setIsProjectModalOpen
+      setIsProjectModalOpen,
+      userId,
+      role
     }}>
       {children}
     </DashboardContext.Provider>

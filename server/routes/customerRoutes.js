@@ -148,11 +148,8 @@ router.post("/projects", uploadHouseImages, async (req, res) => {
       return res.status(400).json({ error: "Customer ID is required" });
     }
 
-    // Check if customer already has a project request
-    const existingProject = await ProjectRequest.findOne({ customer });
-    if (existingProject) {
-      return res.status(400).json({ error: "You have already submitted a project request." });
-    }
+    // Remove the check that restricts customers to only one project request
+    // Allow unlimited requests as per user requirement
 
     // Save relative paths instead of full system paths
     const attachments = req.files?.map(file => `/house_images/${file.filename}`) || [];

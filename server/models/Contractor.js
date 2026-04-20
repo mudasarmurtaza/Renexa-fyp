@@ -5,9 +5,9 @@ const ContractorSchema = new mongoose.Schema({
   cnicNumber: { type: String, required: true, unique: true },
    email: { type: String, required: true, unique: true }, 
    address: { type: String }, 
-   city: { type: String, required: true },
+   city: { type: String },
    password: { type: String, required: true }, 
-   gender: { type: String, enum: ["Male", "Female", "Other"], required: true }, 
+   gender: { type: String, enum: ["Male", "Female", "Other"] }, 
    profilePic: { type: String }, 
    verificationImage: { type: String }, // ✅ New field for contractor verification image
    cnicFront: { type: String }, // ✅ CNIC front image
